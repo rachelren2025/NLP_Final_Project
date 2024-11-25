@@ -17,7 +17,7 @@ Place the CSV file (test.csv) in the project directory.
 
 Run the script:
 
-python llama_script.py
+python llama3_script.py
 
 The script generates two dictionaries:
 
