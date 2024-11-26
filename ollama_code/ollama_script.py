@@ -6,13 +6,16 @@ import pickle
 
 output_dict = {}
 answer_key = {}
+model = "llama3.2"
+# set to True to pass the first 10 into the model
+test = False
 
 def prompt_file(inp):
     # Send input to the process and get the output
 
     # Start the process
     proc = subprocess.Popen(
-        ["ollama", "run", "llama3"],
+        ["ollama", "run", model],
         stdin=subprocess.PIPE,  # Enables sending input
         stdout=subprocess.PIPE,  # Capture standard output
         stderr=subprocess.PIPE,  # Capture standard errors
@@ -58,13 +61,12 @@ def parse_data():
     data = pd.read_csv('test.csv')
     json_data = eval(data.to_json(orient="records", indent=4))
 
-    #k = 0
+    k = 0
     for i in json_data:
-        # Only pass the first 10 into llama
-        # if k == 10:
-        #     break
+        if test == True and k == 10:
+            break
 
-        # k += 1
+        k += 1
 
         inp_str = 'Message: <' + i['0'] + '> 1: <' + i['1'] + '> 2: <' + i['2'] + '> 3: <' + i['3'] + '> 4: <' + i[
             '4'] + '>'
@@ -88,19 +90,27 @@ def mark_invalid_answers(ouput_dict):   #set all invalid answers to 9
             output_dict[prompt_id] = 9
 
 def save_output(output_dict , answer_key):
-    with open("output_file.pkl", "wb") as f:
+    with open("output_file_"+ model + ".pkl", "wb") as f:
         pickle.dump(output_dict, f)
 
-    with open("answer_key.pkl", "wb") as f:
+    with open("answer_key_"+ model + ".pkl", "wb") as f:
         pickle.dump(answer_key, f)
 
-    print(f"Output dictionary saved to output_file.pkl")
-    print(f"Answer key saved to answer_key.pkl")
+    print(f"Output dictionary saved to output_file_{model}.pkl")
+    print(f"Answer key saved to answer_key_{model}.pkl")
 
 start_time = time.time()
 parse_data()
 end_time = time.time()
 total_time = end_time - start_time
+
+if test:
+    with open("test_results_" + model + ".txt", "w", encoding="utf-8") as file:
+        for prompt_id in output_dict:
+            model_answer = output_dict.get(prompt_id, "N/A")
+            correct_answer = answer_key.get(prompt_id, "N/A")
+            file.write(f"{prompt_id} {model_answer} {correct_answer}\n")
+
 
 mark_invalid_answers(output_dict)
 save_output(output_dict, answer_key)

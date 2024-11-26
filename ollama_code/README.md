@@ -12,19 +12,23 @@ Install required Python libraries:
 
 - Ensure the ollama CLI is installed and configured to run the LLaMA model.
 
+# Conditions
+`model` - input model name here
+`test` variable set true if testing with inputs, false if running entire data set
+
 # Usage
 Place the CSV file (test.csv) in the project directory.
 
 Run the script:
 
-python llama3_script.py
+python ollama_script.py
 
 The script generates two dictionaries:
 
-- output_dict: LLaMA's predictions for each case.
+- output_dict: model's predictions for each case.
 - answer_key: The actual correct answers for comparison. 
 
 Example Output:
 
-output_dict = {47821: "2", 47822: "1", 47823: "3"}  
-answer_key = {47821: "2", 47822: "1", 47823: "3"}
+"output_file_<model_name>.pkl" = {47821: "2", 47822: "1", 47823: "3"}  
+"answer_key_<model_name>.pkl" = {47821: "2", 47822: "4", 47823: "1"}
