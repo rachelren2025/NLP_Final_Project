@@ -63,7 +63,7 @@ def parse_data():
 
     k = 0
     for i in json_data:
-        if test == True and k == 10:
+        if test == True and k == 3:
             break
 
         k += 1
