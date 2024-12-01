@@ -1,7 +1,8 @@
 import pickle
+import re
 from collections import Counter
 
-model = "llama3.1"
+model = "phi3"
 
 def load_dict_files(output_file, key_file):
     with open(output_file, "rb") as f:
@@ -11,6 +12,31 @@ def load_dict_files(output_file, key_file):
         answer_key = pickle.load(f)
 
     return output_dict, answer_key
+
+def clean_data(input_dict):
+    cleaned_data = {}
+    
+    # Define regex patterns
+    response_pattern = r"Response:\s*(0|1|2|3|4)"
+    beginning_pattern = r"^(0|1|2|3|4)"
+    
+    for prompt_id, output in input_dict.items():
+        extracted_number = None
+        
+        # Try matching "Response: <number>"
+        response_match = re.search(response_pattern, output)
+        if response_match:
+            extracted_number = int(response_match.group(1))
+        else:
+            # Try matching "{beginning of text}: <number>"
+            beginning_of_text_match = re.match(beginning_pattern, output)
+            if beginning_of_text_match:
+                extracted_number = int(beginning_of_text_match.group(1))
+        
+        # Store the extracted number or None if no match
+        cleaned_data[prompt_id] = extracted_number if extracted_number is not None else 9
+    
+    return cleaned_data
 
 def evaluate_metrics(output_dict, answer_key):
     common_keys = set(output_dict.keys()).intersection(set(answer_key.keys()))
@@ -59,6 +85,9 @@ if __name__ == "__main__":
 
     # Load the dictionaries
     output_dict, answer_key = load_dict_files(output_file, key_file)
+
+    # Clean Data
+    output_dict = clean_data(output_dict)
 
     # Evaluate metrics
     metrics = evaluate_metrics(output_dict, answer_key)

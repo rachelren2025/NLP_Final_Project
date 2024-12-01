@@ -6,7 +6,7 @@ import pickle
 
 output_dict = {}
 answer_key = {}
-model = "llama3.1"
+model = "phi3"
 # set to True to pass the first 1000 into the model
 test = True
 
@@ -62,7 +62,7 @@ def parse_data():
 
     k = 0
     for i in json_data:
-        if test == True and k == 1000:
+        if test == True and k == 50:
             break
 
         k += 1
@@ -115,14 +115,10 @@ parse_data()
 end_time = time.time()
 total_time = end_time - start_time
 
-if test:
-    with open("test_results_" + model + ".txt", "w", encoding="utf-8") as file:
-        for prompt_id in output_dict:
-            model_answer = output_dict.get(prompt_id, "N/A")
-            correct_answer = answer_key.get(prompt_id, "N/A")
-            file.write(f"{prompt_id} {model_answer} {correct_answer}\n")
+# if test:
+#     save_output_csv(output_dict, answer_key)
 
-mark_invalid_answers(output_dict)
-# save_output_csv(output_dict, answer_key)
+# mark_invalid_answers(output_dict)
 save_output_pkl(output_dict, answer_key)
+
 print(f"Total Execution Time for Llama Process: {total_time:.2f} seconds")
