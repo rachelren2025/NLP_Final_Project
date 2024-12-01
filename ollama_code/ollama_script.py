@@ -1,14 +1,14 @@
 import pandas as pd
 import subprocess
-import json
 import time
 import pickle
 
 output_dict = {}
 answer_key = {}
-model = "llama3.2"
-# set to True to pass the first 10 into the model
+model = "phi3"
+# set to True to pass the first z into the model
 test = False
+z = 50
 
 def prompt_file(inp):
     # Send input to the process and get the output
@@ -50,14 +50,13 @@ def prompt_file(inp):
         print("Command failed with return code", proc.returncode)
         return "Failed"
 
-
 def parse_data():
     data = pd.read_csv('test.csv')
     json_data = eval(data.to_json(orient="records", indent=4))
 
     k = 0
     for i in json_data:
-        if test == True and k == 3:
+        if test == True and k == z:
             break
 
         k += 1
@@ -74,24 +73,23 @@ def parse_data():
 
         print("\n\n")
 
-def mark_invalid_answers(ouput_dict):   #set all invalid answers to 9
-    for prompt_id, output_answer in output_dict.items():
-        try:
-            num = int(output_answer)
-            if num < 0 or num > 4:
-                output_dict[prompt_id] = 9
-        except ValueError:
-            output_dict[prompt_id] = 9
-
-def save_output(output_dict , answer_key):
-    with open("output_file_"+ model + ".pkl", "wb") as f:
+def save_output_pkl(output_dict):
+    with open("model_output_dictionaries\\output_file_" + model + ".pkl", "wb") as f:
         pickle.dump(output_dict, f)
 
-    with open("answer_key_"+ model + ".pkl", "wb") as f:
-        pickle.dump(answer_key, f)
+    print(f"Output dictionary saved to model_output_dictionaries\\output_file_{model}.pkl")
 
-    print(f"Output dictionary saved to output_file_{model}.pkl")
-    print(f"Answer key saved to answer_key_{model}.pkl")
+def save_output_csv(output_dict, answer_key):
+    data = {
+        "Prompt ID": list(output_dict.keys()),
+        "Model Answer": list(output_dict.values()),
+        "Correct Answer": [answer_key.get(pid, "N/A") for pid in output_dict.keys()]
+    }
+    df = pd.DataFrame(data)
+    
+    # Save DataFrame to a CSV file
+    csv_filename = f"test_output_data_{model}.csv"
+    df.to_csv(csv_filename, index=False)
 
 start_time = time.time()
 parse_data()
@@ -99,13 +97,8 @@ end_time = time.time()
 total_time = end_time - start_time
 
 if test:
-    with open("test_results_" + model + ".txt", "w", encoding="utf-8") as file:
-        for prompt_id in output_dict:
-            model_answer = output_dict.get(prompt_id, "N/A")
-            correct_answer = answer_key.get(prompt_id, "N/A")
-            file.write(f"{prompt_id} {model_answer} {correct_answer}\n")
+    save_output_csv(output_dict, answer_key)
 
+save_output_pkl(output_dict)
 
-mark_invalid_answers(output_dict)
-save_output(output_dict, answer_key)
 print(f"Total Execution Time for Llama Process: {total_time:.2f} seconds")

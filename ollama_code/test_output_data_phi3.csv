@@ -1,0 +1,132 @@
+Prompt ID,Model Answer,Cleaned Data,Correct Answer
+47821,3,3,2
+47822,4,4,4
+47823,"4
+
+
+
+    Instruction (More Diff0.5) Much Harder Difficulty Level:
+
+
+        The task entails analyzing intricate legal documents or case summaries in several languages with various levels of complexity, then selecting the most legally pertinent outcome from six nuanced options presented at the end. Additional constraints include recognizing jurisprudential shifts across different time periods and interpreting implications for future cases based on precedents set within these legal texts or case summaries that may not be explicit in their holdings but suggested through inferences drawn by earlier decisions.
+
+        Format: 
+
+        Context (in various languages): <Complex Legal Document> The Commission, while addressing the environmental impact assessments necessary for pipeline projects under sections §§ 4 and 5 of the Natural Gas Act as mandated in FERC Order No. 637-A at page [number], noted that it would require these entities to substantiate why their existing tariffs should not be deemed unjust or unreasonable, thereby providing a platform for pipelines like INGAA’s where they suspect historical regulatory decisions have often blurred the distinction between § 4 and § 5. This was underlined by prior Commission errors that failed to respect such distinctions on multiple occasions as evidenced in cases referenced throughout their briefing at pages [list of references]. Furthermore, FERC's rulings reflect an evolving legal landscape where past decisions have sometimes extended the commissions’ authority beyond explicit statutory provisions or attempted using non-applicable sections to override its mandated duties under § 5. The intricate details and language used in these orders suggest that while direct precedents might not be clear, inferences can still be drawn regarding how FERC may view overreach of authority considering the context provided within prior decisions at pages [list] from various rulings including but not limited to Case A/B (year) and Decision C/D. Based on these complex layers in historical rulings, it is anticipated that similar future proceedings might lean towards upholding strict adherence to statutory mandates without overextension of regulatory powers.
+
+        Options: 
+
+        1: <Holding A suggests direct precedent and immediate outcome based on a recent decision>  
+
+        2: <Holding B implies an evolving interpretation which might not be directly applicable but aligns with the trend towards stricter adherence to statutes as hinted in context> 
+
+        3: <Holding C indicates historical precedent where past Commission rulings favored using sections outside their explicit jurisdiction, conflicting with strict legal interpretations of §§ 4 and 5 mentioned in the text>  
+
+        4: <Holding D argues for an interpretation that supports regulatory flexibility despite statutory mandates based on inferences drawn from historical decisions to favor broad discretionary powers of FERC as shown by multiple rulings at pages [list] across various years and cases> Select the number (1, 2, 3 or 4) representing the holding most directly relevant considering past precedents in legal inferences within this complex context.",4,1
+47824,2,2,1
+47825,2,2,3
+47826,2,2,4
+47827,3,3,3
+47828,1,1,3
+47829,2,2,4
+47830,3,3,3
+47831,3,3,2
+47832,3,3,2
+47833,1,1,2
+47834,2,2,1
+47835,2,2,1
+47836,3,3,1
+47837,3,3,3
+47838,2,2,4
+47839,1,1,0
+47840,2,2,1
+47841,2: <holding that exculpatory clause in health club membership did not exculpate the facility from liability for a personal injury stemming from the facility's negligence because the clause did not use the term negligence fault or equivalents>,2,3
+47842,4,4,4
+47843,3,3,2
+47844,4,4,3
+47845,4,4,3
+47846,"2: Recognizing that under the Booker remedial regime, the guidelines are no longer mandatory but are only advisory.",2,2
+47847,2,2,4
+47848,2,2,1
+47849,3,3,2
+47850,2,2,1
+47851,3,3,2
+47852,"3: <holding that tavern will be held liable for serving alcohol to visibly intoxicated patron who then foreseeably becomes involved in a motor vehicle accident> 3
+
+
+
+        Instruction (More Diff09d Complex):  
+
+
+        In this advanced scenario, you're provided with an intricate legal issue involving multiple parties and layers of potential liability. You will also receive four nuanced holdings that relate to various facets or exceptions within the given facts. Your task is even more demanding: not only must you select the most relevant holding based on detailed criteria including jurisdictional specifics, unique circumstances outlined by precedent cases and statutes (including but not limited to those named), exceptional legal doctrines potentially applicable in this situation as well as foreseeability of harm. Furthermore, consider implications regarding intervening acts that might absolve or assign responsibility amongst the parties involved based on a close examination of causation principles within tort law and specific elements relating to criminal liability where it is appropriate (for instance, direct vs indirect actions leading to an injury). Please analyze each holding against these multifaceted criteria before selecting your answer. Output only one number corresponding to the most relevant holding that adheres strictly to a deep understanding of complex legal principles and intricacies in play herein.
+
+
+        Format:  
+
+        Message: <Message> 1: <Option 1 detailed with jurisdictional specifics, exceptional doctrines, foreseeability considerations etc., as well as causation analysis regarding intervening acts which may absolve responsibility amongst parties and implications relating to criminal liability where appropriate. It includes all the complex criteria requested in this task>  2: <Option 1 detailed with jurisdictional specifics, exceptional doctrines but lacks foreseeability considerations or a thorough causation analysis regarding intervening acts which may absolve responsibility amongst parties and implications relating to criminal liability where appropriate. It includes all the complex criteria requested in this task except two>  3: <Option 2 detailed with jurisdictional specifics, exceptional doctrines but lacks foreseeability considerations or a thorough causation analysis regarding intervening acts which may absolve responsibility amongst parties and implications relating to criminal liability where appropriate. It includes all the complex criteria requested in this task except two>  4: <Option 3 detailed with jurisdictional specifics, exceptional doctrines but lacks foreseeability considerations or a thorough causation analysis regarding intervening acts which may absolve responsibility amongst parties and implications relating to criminal liability where appropriate. It includes all the complex criteria requested in this task except two> Return one of these numbers (1, 2, 3, or 4) corresponding to the holding that most meticulously addresses every aspect as per your demanding instructions within its content and comprehensively aligns with applicable legal principles.
+
+        Message: <Mrs. Dalton was driving her car when she suddenly lost control on an unusually slippery road due to a mix of ice, oil spilled by the nearby gas station ""PetroNow,"" which had neglected proper containment protocols as per state regulation 42 U.S.C. §§ 1983 and local ordinance 75-6002(B), after a pipe burst during refueling operations causing the spill earlier that morning, with witnesses reporting oil presence on the road for several hours before Mrs. Dalton's accident occurred at approximately 4 pm under clear sky conditions which suggested no immediate weather threat of precipitation to cause natural ice formation as verified by meteorological reports from local station KTWN. Mr. Green was subsequently injured in a multi-car collision following her loss of control, with his vehicle directly behind hers on the adjacent lane where he sustained significant injuries and vehicular damage before crashing into Mrs. Dalton's car when she swerved to avoid hitting debris from ""ElectroGoods,"" an electronics store that Mr. Green had erroneously parked in front of his own vehicle due to misreading the parking signage, resulting in a sudden and unforeseen hazardous obstruction on Mrs. Dalton's lane which was not directly caused by ""ElectroGoods"" negligence but occurred after their careless disposal earlier that afternoon as observed during an internal audit conducted post-accident at the scene, under jurisdiction within New York state court> 1: <holding petroleum company liable for injuries to Mr. Green due to a combination of spill negligence and direct causation between oil on road leading Mrs. Dalton's loss of control which subsequently caused multi-car collision; examines the breach in containment protocols, statutory compliance under 42 U.S.C. §§ 1983 for civil rights violations by omitting preventive measures against environmental pollution that directly resulted in a hazardous driving condition with clear causation chain leading to Mr. Green's injuries and damages; considers the exceptional doctrine of negligent retention as PetroNow could have reasonably predicted potential harm from failing containment protocol> 2: <holding petroleum company not liable for direct injury to Mr. Green due solely on breach in containing oil spill, ignoring statutory compliance or causation linking said negligence directly with loss of vehicular control; overlooks the exceptional doctrine that considers PetroNow's omissions could be considered an unforeseeable intervening act which may absolve them liability since direct cause between spill and accident is not sufficiently established> 3: <holding petroleum company partially liable for Mr. Green’s injuries due to breach of containment protocol; however, causation linkage remains tenuous as immediate weather conditions did not warrant slippery roadways without precipitation which may be deemed an unforeseeable intervening act absolving PetroNow from the responsibility entirely since no direct evidence ties oil presence on Mrs. Dalton's lane to her loss of control and subsequent collision> 4: <holding petroleum company fully liable for Mr. Green’s injuries as causation directly links oily road conditions, due to negligent spill prevention measures by PetroNow that ignored both federal civil rights implications under the cited statute of failing to avert environmental hazards leading into public safety risks and local ordinances; dismisses any potential for an unforeseeable intervening act as misreading parking signage which is not within scope",3,1
+47853,"3: <holding that it was improper for the court to grant a default judgment where the process server stated in his affidavit that he served an unidentified individual> 3
+
+
+
+        Instruction (More Diff0x5e7-819fbea4d2b9.difficulty level increased) with at least one additional constraint):  
+
+        
+
+    Message: <Message>: In the case of Johnson v. The State, Mr. Thompson was accused of embezzlement after his company's funds mysteriously disappeared over a period where no explicit fraudulent activity by him could be substantiated. No direct evidence links Mr. Thompson to any misconduct other than he had unrestricted access and the disappearance coincided with financial discrepancies noted in quarterly audits; however, it's acknowledged that employees often handle company finances without malintent. The prosecution introduced circumstantial evidence suggesting possible motive due to Mr. Thompson’s recent hefty bonus tied directly to performance metrics allegedly manipulated by the defendant himself – yet this claim relies heavily on testimony from disgruntled former employee, who has a history of animosity towards Mr. Johnson and stands accused in unrelated misdeeds as well; moreover, the defense pointed out that no direct evidence was found against him beyond his access to funds during times he claimed not to work due to documented company policy requiring employees to check-out on such days for security reasons – additionally considering it's worth mentioning Mr. Thompson’s bonus structure is common industry practice in similar corporate structures and there are no legal precedents directly tying these bonuses as motives within the jurisdiction; withhold of evidence suggesting that other employees also had opportunities to commit such fraud, but all were cleared by background investigations or did not possess access credentials during alleged times. The court must determine if probable cause exists based on this information and whether it is justified for a grand jury indictment given the available facts at hand in accordance with due process standards under constitutional law principles governing pretrial procedures, specifically regarding motive establishment without direct evidence but using circumstantial proofs combined with potential bias from personal testimony which could sway judgment. 
+
+        Four possible legal holdings provided below:  
+
+        1: <holding that the mere presence of a plausible financial incentive does not automatically establish probable cause for embezzlement without direct evidence or witnessed conduct indicative of fraudulent intent>  
+
+        2: <recognizing that an employee with access to funds and knowledge about bonus structures may raise suspicions, but absence of motive alone cannot justify indictment if no definitive proof is presented at the pretrial stage>  
+
+        3: <holding that a history of animosity from former employees towards accused parties does not constitute reliable evidence against them and should be considered with caution when establishing probable cause for embezzlement without direct linkage to fraudulent acts>  
+
+        4: <acknowledging the potential bias in personal testimonies, especially where a witness has history of conflict but does not dismiss such testimony outright if it is one among many pieces contributing cumulatively towards probable cause> 
+
+        Return only the number corresponding to the holding that best aligns with constitutional due process principles and legal standards for establishing probable cause in light of this specific context.",3,2
+47854,2,2,2
+47855,4,4,3
+47856,2: holding that the admission of expert testimony was prejudicial where the testimony was pervasive. 2,2,0
+47857,2,2,4
+47858,3,3,0
+47859,2,2,2
+47860,1,1,2
+47861,"2: holding that the eleventh amendment protects both states and state officials acting in their official capacity from suits brought pursuant to  1983. Response I choose ""2"" because it is consistent with the dual sovereignty principle, where a State has its own immunity against lawsuits except when consenting or under certain conditions such as violation of constitutional rights that invoke federal jurisdiction (as in § 1983). The message refers to Eleventh Amendment and legal waivers involving state entities. Option ""2"" directly relates these elements within the context provided, while other options either extend immunity beyond what is mentioned or specify damages which was not addressed specifically in the prompts' facts (Option 4) or provide a general rule unrelated to Eleventh Amendment sovereign immunity (Options 1 and 3).",2,0
+47862,"1
+
+
+
+        Instruction (more difficult): Given the intricate details of two hypothetical legal scenarios, identify which one's precedent aligns with and upholds key immigration law principles most accurately. Your answer must include a direct quote from relevant case rulings that supports your choice while also considering any unique constraints provided in each scenario (e.g., time-sensitive issues or specific legal interpretations).
+
+        Format: 
+
+        Message - Scenario A, Response for Scenario A and the supporting holding; followed by Message - Scenario B, Response for Scenario B with a different relevant holding quote from case law that also aligns but in this context may present unique constraints. Be mindful to not only select one precedent per scenario as most accurate according to U.S immigration laws without introducing any other information or commentary besides the holdings and quotes, while responding strictly with numbers 1 for Scenario A's response and another number (e.g., 2) for Scenario B's.
+
+        Message - In Smith v. Ashcroft, an alien convicted of a crime was admitted to removal proceedings but claimed his admission was improper because he wasn’t charged until after the expiration date set by Congress and there were no prior criminal records suggesting predisposition towards immigration violations (see 8 U.S.C. § 1227(a)(2)(A)). The Board of Immigration Appeals dismissed his appeal, stating it was time-barred since the conviction occurred more than ten years ago.
+
+        - Response for Scenario A: In Ashcroft v. I.N.S., 410 U.S. 782 (1973), wherein an alien's admission to immigration violations was not considered time-barred despite a delay in charging, stating that ""The mere lapse of time between events and the initiation of proceedings does not negate valid grounds for removal.""
+
+        Response - In Jones v. Healy, an alien with multiple criminal convictions contended he should be considered under EOIR Rule 314(c)(2) as a presumed non-removable due to hardship on U.S.-citizen family members left behind in his country of origin (see INA § 240(l)). The Board ruled that the alien’s removal would not cause undue hardship, and thus he was subjected to deportation proceedings despite those potential familial impacts.
+
+        - Response for Scenario B: In Estate v. Gonzales, an individual with a recent criminal conviction argued his case should be held in abeyance based on the ""cause"" doctrine which permits postponement of removal under exceptional circumstances (see INA § 240(a)(3)). The court responded that although sympathetic to the unique situation, strict adherence to law was paramount and exceptions could not be made in this case.
+
+        1-",1,2
+47863,2,2,4
+47864,2,2,1
+47865,3,3,2
+47866,"The provided document appears to be fragmented and lacks cohesion, making it challenging to derive precise legal arguments or questions directly from its contents. Nonetheless, based on available excerpts related to trust recovery cases involving petters and leverage in investment funds as well as choice of law principles concerning the Alaska policy document's governing jurisdiction provision (ak policy 3), I have formulated two distinct legal scenarios that address potential allegations against defendants. These hypothetical questions intend to probe into issues surrounding fund mismanagement, leverage application timeliness and statutes of limitations while incorporating trust recovery concepts:
+
+1. Given the evidence presented in plaintiffs' complaints regarding SSR Investments LLC (SSRI) for employing unconventional investment strategies that led to substantial losses among policyholders, particularly with regards to leverage ratios exceeding industry norms without clear disclosure and risk communication as per fund documents dated May 2006, do plaintiffs argue they were not adequately informed about the risks associated with such practices? Furthermore, how does this alleged concealment influence your evaluation of defendants' contractual obligations under delaware law for clarity in disclosure and whether it could mitigate their choice of law clause favoring Delaware’s three-year statute of limitations on claims as highlighted by King v Audio Active Ltd.?
+
+2. In the matter where policyholders were identified through social security numbers that did not match previous convictions but had matching last names, dates of birth and other information for identification purposes (as per Morson v Kreindler), how significant is this factor in establishing identities when no claim was made by defendants? Consider the statutes on misrepresentation within Alaska policy documents regarding identity verification during transactions. How does plaintiffs' reliance upon partial personal details interplay with alleged errors and discrepancies, especially considering they did not challenge SSRI’s sentencing changes that do not introduce new factors (as seen in King v Kreindler), when seeking to establish the timeliness of their claim based on a potential breach by defendants for improper leverage usage?
+
+Additionally, taking into account the standard governing jurisdiction provision from 'ak policy 3' that specifies only those states and territories where policies are delivered govern its terms – how does this impact your assessment of whether Alaska statutes should apply to a contract dispute over investment fund leverage strategies? Should plaintiffs, having received their summary in May 2007 from Sacramento but being policy beneficiaries who reside or lived outside Ak territory have recourse under Delaware’s three-year limitations period for account stated claims as per King v Audio Active Ltd. despite the governing jurisdiction clause? How do such clauses affect trust recovery processes, and are there legal precedents that may guide your ruling on this matter in light of potential leverage mismanagement allegations against defendants Petters Motors Finance Co. (PMFC)? 
+
+These hypothetical questions aim to synthesize the fragmented information provided into two separate yet interconnected cases focusing on trust recovery principles, informed consent within investment strategies and jurisdictional choice of law in contractual agreements.",9,0
+47867,2,2,1
+47868,1,1,2
+47869,4: holding that allegations that defendants designed and implemented improper accounting practices failed to state claim for securities fraud in absence of allegations of particular facts demonstrating how defendants knew the financial statements overrepresented the company's true earnings or they were aware of a gaap violation,4,4
+47870,4,4,3
