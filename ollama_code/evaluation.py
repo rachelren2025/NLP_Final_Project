@@ -13,27 +13,36 @@ def load_dict_files(output_file, key_file):
 
     return output_dict, answer_key
 
-def clean_data(input_dict):
+def mark_invalid_answers(input_dict):   # Set all invalid answers to 9
+    for prompt_id, output_answer in input_dict.items():
+        try:
+            num = int(output_answer)
+            if num < 0 or num > 4:
+                input_dict[prompt_id] = 9
+        except ValueError:
+            input_dict[prompt_id] = 9
+    return input_dict
+
+def clean_data(input_dict): # Use regex to clean data
     cleaned_data = {}
     
-    # Define regex patterns
+    # Regex patterns
     response_pattern = r"Response:\s*(0|1|2|3|4)"
     beginning_pattern = r"^(0|1|2|3|4)"
     
     for prompt_id, output in input_dict.items():
         extracted_number = None
         
-        # Try matching "Response: <number>"
+        # "Response: <number>"
         response_match = re.search(response_pattern, output)
         if response_match:
             extracted_number = int(response_match.group(1))
         else:
-            # Try matching "{beginning of text}: <number>"
+            # "{beginning of text}<number>: "
             beginning_of_text_match = re.match(beginning_pattern, output)
             if beginning_of_text_match:
                 extracted_number = int(beginning_of_text_match.group(1))
         
-        # Store the extracted number or None if no match
         cleaned_data[prompt_id] = extracted_number if extracted_number is not None else 9
     
     return cleaned_data
@@ -87,7 +96,7 @@ if __name__ == "__main__":
     output_dict, answer_key = load_dict_files(output_file, key_file)
 
     # Clean Data
-    output_dict = clean_data(output_dict)
+    output_dict = mark_invalid_answers(output_dict)
 
     # Evaluate metrics
     metrics = evaluate_metrics(output_dict, answer_key)

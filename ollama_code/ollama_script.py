@@ -1,6 +1,5 @@
 import pandas as pd
 import subprocess
-import json
 import time
 import pickle
 
@@ -79,15 +78,6 @@ def parse_data():
 
         print("\n\n")
 
-def mark_invalid_answers(ouput_dict):   #set all invalid answers to 9
-    for prompt_id, output_answer in output_dict.items():
-        try:
-            num = int(output_answer)
-            if num < 0 or num > 4:
-                output_dict[prompt_id] = 9
-        except ValueError:
-            output_dict[prompt_id] = 9
-
 def save_output_pkl(output_dict , answer_key):
     with open("output_file_"+ model + ".pkl", "wb") as f:
         pickle.dump(output_dict, f)
@@ -115,10 +105,9 @@ parse_data()
 end_time = time.time()
 total_time = end_time - start_time
 
-# if test:
-#     save_output_csv(output_dict, answer_key)
+if test:
+    save_output_csv(output_dict, answer_key)
 
-# mark_invalid_answers(output_dict)
 save_output_pkl(output_dict, answer_key)
 
 print(f"Total Execution Time for Llama Process: {total_time:.2f} seconds")
