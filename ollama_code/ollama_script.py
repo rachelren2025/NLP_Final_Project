@@ -27,14 +27,8 @@ def prompt_file(inp):
     try:
         command = """
 
-        Instruction: You will receive a message representing the context or facts of a legal case, followed by four 
-        possible legal holdings. Your task is to select the holding that is most relevant and aligns with the legal 
-        principles or facts in the message. Output only one number and nothing else at all.
-
-        Format:
-
-        Message: <Message> 1: <Option 1> 2: <Option 2> 3: <Option 3> 4: <Option 4> Response: Return the number (1, 2, 
-        3, or 4) corresponding to the holding that is the most contextually relevant to the message.
+        
+        
 
         """
 
