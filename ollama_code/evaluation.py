@@ -28,7 +28,7 @@ def clean_data(input_dict): # Use regex to clean data
     
     # Regex patterns
     response_pattern = r"Response:\s*(0|1|2|3|4)"
-    beginning_pattern = r"^(0|1|2|3|4)"
+    beginning_pattern = r"^\"?(0|1|2|3|4)"
     
     for prompt_id, output in input_dict.items():
         extracted_number = None
@@ -89,14 +89,14 @@ def evaluate_metrics(output_dict, answer_key):
 
 if __name__ == "__main__":
     # File names
-    output_file = "output_file_" + model + ".pkl"
-    key_file = "answer_key_" + model + ".pkl"
+    output_file = "model_output_dictionaries\\output_file_" + model + ".pkl"
+    key_file = "answer_key.pkl"
 
     # Load the dictionaries
     output_dict, answer_key = load_dict_files(output_file, key_file)
 
     # Clean Data
-    output_dict = mark_invalid_answers(output_dict)
+    output_dict = clean_data(output_dict)
 
     # Evaluate metrics
     metrics = evaluate_metrics(output_dict, answer_key)

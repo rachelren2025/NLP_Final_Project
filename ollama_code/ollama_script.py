@@ -6,8 +6,9 @@ import pickle
 output_dict = {}
 answer_key = {}
 model = "phi3"
-# set to True to pass the first 1000 into the model
-test = True
+# set to True to pass the first z into the model
+test = False
+z = 50
 
 def prompt_file(inp):
     # Send input to the process and get the output
@@ -61,7 +62,7 @@ def parse_data():
 
     k = 0
     for i in json_data:
-        if test == True and k == 50:
+        if test == True and k == z:
             break
 
         k += 1
@@ -78,15 +79,11 @@ def parse_data():
 
         print("\n\n")
 
-def save_output_pkl(output_dict , answer_key):
-    with open("output_file_"+ model + ".pkl", "wb") as f:
+def save_output_pkl(output_dict):
+    with open("model_output_dictionaries\\output_file_" + model + ".pkl", "wb") as f:
         pickle.dump(output_dict, f)
 
-    with open("answer_key_"+ model + ".pkl", "wb") as f:
-        pickle.dump(answer_key, f)
-
-    print(f"Output dictionary saved to output_file_{model}.pkl")
-    print(f"Answer key saved to answer_key_{model}.pkl")
+    print(f"Output dictionary saved to model_output_dictionaries\\output_file_{model}.pkl")
 
 def save_output_csv(output_dict, answer_key):
     data = {
@@ -97,7 +94,7 @@ def save_output_csv(output_dict, answer_key):
     df = pd.DataFrame(data)
     
     # Save DataFrame to a CSV file
-    csv_filename = f"output_data_{model}.csv"
+    csv_filename = f"test_output_data_{model}.csv"
     df.to_csv(csv_filename, index=False)
 
 start_time = time.time()
@@ -108,6 +105,6 @@ total_time = end_time - start_time
 if test:
     save_output_csv(output_dict, answer_key)
 
-save_output_pkl(output_dict, answer_key)
+save_output_pkl(output_dict)
 
 print(f"Total Execution Time for Llama Process: {total_time:.2f} seconds")
