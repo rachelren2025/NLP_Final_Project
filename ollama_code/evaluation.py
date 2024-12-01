@@ -1,6 +1,8 @@
 import pickle
 from collections import Counter
 
+model = "llama3.1"
+
 def load_dict_files(output_file, key_file):
     with open(output_file, "rb") as f:
         output_dict = pickle.load(f)
@@ -52,8 +54,8 @@ def evaluate_metrics(output_dict, answer_key):
 
 if __name__ == "__main__":
     # File names
-    output_file = "output_file.pkl"
-    key_file = "answer_key.pkl"
+    output_file = "output_file_" + model + ".pkl"
+    key_file = "answer_key_" + model + ".pkl"
 
     # Load the dictionaries
     output_dict, answer_key = load_dict_files(output_file, key_file)
@@ -62,6 +64,7 @@ if __name__ == "__main__":
     metrics = evaluate_metrics(output_dict, answer_key)
 
     # Print results
+    print("Model: " + model)
     print("Evaluation Metrics:")
     print(f"Accuracy: {metrics['accuracy']:.4f}")
     print(f"Precision: {metrics['precision']:.4f}")

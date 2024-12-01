@@ -6,9 +6,9 @@ import pickle
 
 output_dict = {}
 answer_key = {}
-model = "llama3.2"
-# set to True to pass the first 10 into the model
-test = False
+model = "llama3.1"
+# set to True to pass the first 1000 into the model
+test = True
 
 def prompt_file(inp):
     # Send input to the process and get the output
@@ -56,14 +56,13 @@ def prompt_file(inp):
         print("Command failed with return code", proc.returncode)
         return "Failed"
 
-
 def parse_data():
     data = pd.read_csv('test.csv')
     json_data = eval(data.to_json(orient="records", indent=4))
 
     k = 0
     for i in json_data:
-        if test == True and k == 3:
+        if test == True and k == 1000:
             break
 
         k += 1
@@ -89,7 +88,7 @@ def mark_invalid_answers(ouput_dict):   #set all invalid answers to 9
         except ValueError:
             output_dict[prompt_id] = 9
 
-def save_output(output_dict , answer_key):
+def save_output_pkl(output_dict , answer_key):
     with open("output_file_"+ model + ".pkl", "wb") as f:
         pickle.dump(output_dict, f)
 
@@ -98,6 +97,18 @@ def save_output(output_dict , answer_key):
 
     print(f"Output dictionary saved to output_file_{model}.pkl")
     print(f"Answer key saved to answer_key_{model}.pkl")
+
+def save_output_csv(output_dict, answer_key):
+    data = {
+        "Prompt ID": list(output_dict.keys()),
+        "Model Answer": list(output_dict.values()),
+        "Correct Answer": [answer_key.get(pid, "N/A") for pid in output_dict.keys()]
+    }
+    df = pd.DataFrame(data)
+    
+    # Save DataFrame to a CSV file
+    csv_filename = f"output_data_{model}.csv"
+    df.to_csv(csv_filename, index=False)
 
 start_time = time.time()
 parse_data()
@@ -111,7 +122,7 @@ if test:
             correct_answer = answer_key.get(prompt_id, "N/A")
             file.write(f"{prompt_id} {model_answer} {correct_answer}\n")
 
-
 mark_invalid_answers(output_dict)
-save_output(output_dict, answer_key)
+# save_output_csv(output_dict, answer_key)
+save_output_pkl(output_dict, answer_key)
 print(f"Total Execution Time for Llama Process: {total_time:.2f} seconds")
