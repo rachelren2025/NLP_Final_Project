@@ -30,16 +30,23 @@ def prompt_file(inp):
     )
 
     try:
-        # Define the prompt command (modify as per your requirement)
-        command = """Instruction: You will receive a message representing the context or facts of a legal case, followed by four 
-        possible legal holdings. Your task is to select the holding that is most relevant and aligns with the legal 
-        principles or facts in the message. Output only the number of the most relevant holding.
+        # Define the prompt command
+        command = """Instruction: You will receive a message representing the context or facts of a legal case.
+        Your task is to generate the holding that is most relevant and aligns with the legal 
+        principles or facts in the message.
 
-        Format:
+    Format:
 
-        Message: <Message> 1: <Option 1> 2: <Option 2> 3: <Option 3> 4: <Option 4> 
-        Response: 
-        """
+    Message: <Message> 
+
+    Response: Generate the most relevant holding as a complete sentence or paragraph.
+    
+    For example:
+    
+    Message: even though the store benefitted from the advertising, the court found this did not rise to the level of consideration. Id. In State v. Socony Mobil Oil Co., the Court of Civil Appeals contrasted Brice with Cole and found no consideration where a filling station paid for bingo cards but gave them away free to any and all persons who came to their stations to request them, and a local TV station broadcast games in which bingo cards were used with winners being awarded cash prizes. 386 S.W.2d 169 (Tex.Civ.App.-San Antonio 1964). Some jurisdictions outside of the State of Texas have held that requiring a person to actually go to the location of the sweepstakes sponsor in order to participate constitutes consideration. See Lucky Calendar Co. v. Cohen, 19 N.J. 399, 117 A.2d 487, 496 (1955)(<HOLDING>); Knox Indus. Corp. v. State ex rel. Scanland,
+    
+    Response: holding that murder committed by customer was not foreseeable result of excessive sale of alcohol to customer
+    """
 
         stdout, stderr = proc.communicate(input=command + inp, timeout=30)
 
@@ -48,7 +55,7 @@ def prompt_file(inp):
         stdout, stderr = proc.communicate()
 
     print("STDOUT:", stdout)
-    print("STDERR:", stderr)
+    #print("STDERR:", stderr)
 
     # Check if the process ended successfully
     if proc.returncode == 0:
@@ -70,22 +77,28 @@ def parse_data():
 
         k += 1
 
+
+        # Construct the input string for the model
         inp_str = (
-            'Message: <' + i['0'] + '> 1: <' + i['1'] + '> 2: <' + i['2'] + '> 3: <' +
-            i['3'] + '> 4: <' + i['4'] + '>'
+                'Message: <' + i['0']
         )
 
-        print("Input String:", inp_str)
+        print(inp_str)
 
         prompt_id = i['Unnamed: 0']
         out = prompt_file(inp_str).strip()
 
         output_dict[prompt_id] = out
-        answer_key[prompt_id] = i['11']
 
-        # Calculate cosine similarity between model output and answer key
+        # Retrieve the correct holding text based on column `11`
+        correct_option = int(i['11'])  # Convert to integer
+        correct_holding = i[str(correct_option)]  # Map the option to the correct holding column
+
+        print(f"Correct Holding for Prompt ID {prompt_id}: {correct_holding}")
+
+        # Calculate embeddings and cosine similarity
         model_embedding = embedding_model.encode([out])
-        key_embedding = embedding_model.encode([i['11']])
+        key_embedding = embedding_model.encode([correct_holding])
         similarity = cosine_similarity(model_embedding, key_embedding)
 
         # Store and print the similarity score

@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="11b04741-cfb6-4f4d-adf3-695c615f990f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ollama_code/Neil/cosine similarity for llama.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ollama_code/Neil/test.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ollama_code/ollama_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/ollama_code/ollama_script.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ollama_code/Neil/cosine similarity for llama.py" beforeDir="false" afterPath="$PROJECT_DIR$/ollama_code/Neil/cosine similarity for llama.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
