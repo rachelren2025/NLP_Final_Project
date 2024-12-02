@@ -5,9 +5,9 @@ import json
 
 output_dict = {}
 answer_key = {}
-model = "llama3.2"
+model = "phi3"
 # set to True to pass the first z into the model
-test = True
+test = False
 z = 100
 
 def prompt_file(inp):
@@ -33,13 +33,12 @@ def prompt_file(inp):
 
         Format:
 
-        Message: <Message> 0: <Option 1> 1: <Option 2> 2: <Option 3> 3: <Option 4> 4: <Option 5> Response: Return the 
+        Message: <Message> 0: <Option 0> 1: <Option 1> 2: <Option 2> 3: <Option 3> 4: <Option 4> Response: Return only the 
         number (0, 1, 2, 3, or 4) corresponding to the holding that is the most contextually relevant to the message.
 
         """
 
         stdout, stderr = proc.communicate(input=command + inp, timeout=30)
-
 
     except subprocess.TimeoutExpired:
         proc.kill()

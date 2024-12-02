@@ -3,7 +3,7 @@ import re
 from collections import Counter
 from sklearn.metrics import precision_score
 
-model = "llama3.2"
+model = "gemma2"
 
 def load_dict_files(output_file, answer_key):
     with open(output_file, "rb") as f:
@@ -74,7 +74,7 @@ def compute_mean_weighted_precision(model_results, answer_key):
 
 if __name__ == "__main__":
     # File names
-    model_results_filename = "results\\test_output_file_" + model + ".json"
+    model_results_filename = "results\\output_file_" + model + ".json"
     answer_key_filename = "results\\answer_key.json"
 
     # Load files
