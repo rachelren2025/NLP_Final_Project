@@ -1,14 +1,14 @@
 import pandas as pd
 import subprocess
 import time
-import pickle
+import json
 
 output_dict = {}
 answer_key = {}
-model = "phi3"
+model = "llama3.2"
 # set to True to pass the first z into the model
-test = False
-z = 50
+test = True
+z = 100
 
 def prompt_file(inp):
     # Send input to the process and get the output
@@ -27,14 +27,14 @@ def prompt_file(inp):
     try:
         command = """
 
-        Instruction: You will receive a message representing the context or facts of a legal case, followed by four 
+        Instruction: You will receive a message representing the context or facts of a legal case, followed by five 
         possible legal holdings. Your task is to select the holding that is most relevant and aligns with the legal 
         principles or facts in the message. Output only one number and nothing else at all.
 
         Format:
 
-        Message: <Message> 1: <Option 1> 2: <Option 2> 3: <Option 3> 4: <Option 4> Response: Return the number (1, 2, 
-        3, or 4) corresponding to the holding that is the most contextually relevant to the message.
+        Message: <Message> 0: <Option 1> 1: <Option 2> 2: <Option 3> 3: <Option 4> 4: <Option 5> Response: Return the 
+        number (0, 1, 2, 3, or 4) corresponding to the holding that is the most contextually relevant to the message.
 
         """
 
@@ -67,8 +67,7 @@ def parse_data():
 
         k += 1
 
-        inp_str = 'Message: <' + i['0'] + '> 1: <' + i['1'] + '> 2: <' + i['2'] + '> 3: <' + i['3'] + '> 4: <' + i[
-            '4'] + '>'
+        inp_str = 'Message: <' + i['0'] + '> 0: <' + i['1'] + '> 1: <' + i['2'] + '> 2: <' + i['3'] + '> 3: <' + i['4'] + '> 4: <' + i['5'] + '>'
 
         print(inp_str)
 
@@ -79,32 +78,22 @@ def parse_data():
 
         print("\n\n")
 
-def save_output_pkl(output_dict):
-    with open("model_output_dictionaries\\output_file_" + model + ".pkl", "wb") as f:
-        pickle.dump(output_dict, f)
+def save_output_json(output_dict):
+    if test:
+        with open("results\\test_output_file_" + model + ".json", "w", encoding='utf-8') as f:
+            json.dump(output_dict, f, indent=4, ensure_ascii=False)
+    else:
+        with open("results\\output_file_" + model + ".json", "w", encoding='utf-8') as f:
+            json.dump(output_dict, f, indent=4, ensure_ascii=False)
 
-    print(f"Output dictionary saved to model_output_dictionaries\\output_file_{model}.pkl")
+    print(f"Output dictionary saved to results\\output_file_{model}.json")
 
-def save_output_csv(output_dict, answer_key):
-    data = {
-        "Prompt ID": list(output_dict.keys()),
-        "Model Answer": list(output_dict.values()),
-        "Correct Answer": [answer_key.get(pid, "N/A") for pid in output_dict.keys()]
-    }
-    df = pd.DataFrame(data)
-    
-    # Save DataFrame to a CSV file
-    csv_filename = f"test_output_data_{model}.csv"
-    df.to_csv(csv_filename, index=False)
 
 start_time = time.time()
 parse_data()
 end_time = time.time()
 total_time = end_time - start_time
 
-if test:
-    save_output_csv(output_dict, answer_key)
-
-save_output_pkl(output_dict)
+save_output_json(output_dict)
 
 print(f"Total Execution Time for Llama Process: {total_time:.2f} seconds")

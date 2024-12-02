@@ -1,109 +1,92 @@
-import pickle
+import json
 import re
 from collections import Counter
+from sklearn.metrics import precision_score
 
-model = "phi3"
+model = "llama3.2"
 
-def load_dict_files(output_file, key_file):
+def load_dict_files(output_file, answer_key):
     with open(output_file, "rb") as f:
-        output_dict = pickle.load(f)
+        output_dict = json.load(f)
 
-    with open(key_file, "rb") as f:
-        answer_key = pickle.load(f)
+    with open(answer_key, "rb") as f:
+        answer_key = json.load(f)
 
     return output_dict, answer_key
 
-def mark_invalid_answers(input_dict):   # Set all invalid answers to 9
-    for prompt_id, output_answer in input_dict.items():
-        try:
-            num = int(output_answer)
-            if num < 0 or num > 4:
-                input_dict[prompt_id] = 9
-        except ValueError:
-            input_dict[prompt_id] = 9
-    return input_dict
-
-def clean_data(input_dict): # Use regex to clean data
+def clean_results(model_results):
+    # Use regex to clean data
     cleaned_data = {}
     
     # Regex patterns
+    only_number_pattern = r"^(0|1|2|3|4)$"
     response_pattern = r"Response:\s*(0|1|2|3|4)"
-    beginning_pattern = r"^\"?(0|1|2|3|4)"
+    beginning_pattern = r"^\"?(0|1|2|3|4):"
     
-    for prompt_id, output in input_dict.items():
+    for prompt_id, output in model_results.items():
         extracted_number = None
         
-        # "Response: <number>"
-        response_match = re.search(response_pattern, output)
-        if response_match:
-            extracted_number = int(response_match.group(1))
+        # Check for "<number>"
+        only_number_match = re.match(only_number_pattern, output.strip())
+        if only_number_match:
+            extracted_number = int(only_number_match.group(1))
         else:
-            # "{beginning of text}<number>: "
-            beginning_of_text_match = re.match(beginning_pattern, output)
-            if beginning_of_text_match:
-                extracted_number = int(beginning_of_text_match.group(1))
+            # Check for "Response: <number>"
+            response_match = re.search(response_pattern, output)
+            if response_match:
+                extracted_number = int(response_match.group(1))
+            else:
+                # Check for "<number>: "
+                beginning_of_text_match = re.match(beginning_pattern, output)
+                if beginning_of_text_match:
+                    extracted_number = int(beginning_of_text_match.group(1))
         
-        cleaned_data[prompt_id] = extracted_number if extracted_number is not None else 9
+        # Default to 9 if no valid number is extracted
+        cleaned_data[prompt_id] = extracted_number if extracted_number is not None else "9"
     
     return cleaned_data
 
-def evaluate_metrics(output_dict, answer_key):
-    common_keys = set(output_dict.keys()).intersection(set(answer_key.keys()))
+# Metrics
+def compute_accuracy(model_results, answer_key):
+    correct = 0
+    total = len(model_results)
     
-    # Extract predictions and true values
-    y_pred = [int(output_dict[k]) for k in common_keys]
-    y_true = [int(answer_key[k]) for k in common_keys]
+    for prompt_id, answer in answer_key.items():
+        if prompt_id in model_results and str(model_results[prompt_id]) == str(answer):
+            correct += 1
+    
+    accuracy = (correct / total) if total > 0 else 0
+    return accuracy
 
-    # Calculate Accuracy
-    correct_predictions = sum(1 for pred, true in zip(y_pred, y_true) if pred == true)
-    accuracy = correct_predictions / len(y_true) if y_true else 0
+def compute_mean_weighted_precision(model_results, answer_key):
+    classes = {0, 1, 2, 3, 4, 9}
+    # Convert predicted labels to integers
+    y_true = []
+    y_pred = []
+    for prompt_id in answer_key.keys():
+        if prompt_id in model_results:
+            y_true.append(answer_key[prompt_id])
+            y_pred.append(int(model_results[prompt_id]))  # Convert string to int
 
-    # Calculate Precision and Recall
-    label_counts = Counter(y_true)
-    precision = 0
-    recall = 0
-
-    for label in label_counts:
-        # True Positives (TP), False Positives (FP), and False Negatives (FN)
-        tp = sum(1 for pred, true in zip(y_pred, y_true) if pred == label and true == label)
-        fp = sum(1 for pred, true in zip(y_pred, y_true) if pred == label and true != label)
-        fn = sum(1 for pred, true in zip(y_pred, y_true) if pred != label and true == label)
-
-        # Calculate Precision and Recall for each label
-        precision_label = tp / (tp + fp) if (tp + fp) > 0 else 0
-        recall_label = tp / (tp + fn) if (tp + fn) > 0 else 0
-
-        # Average (Macro Precision/Recall)
-        precision += precision_label
-        recall += recall_label
-
-    # Average over all labels
-    precision /= len(label_counts) if label_counts else 0
-    recall /= len(label_counts) if label_counts else 0
-
-    return {
-        "accuracy": accuracy,
-        "precision": precision,
-        "recall": recall
-    }
+    # Calculate the weighted mean precision
+    precision = precision_score(y_true, y_pred, labels=classes, average='weighted', zero_division=0)
+    return precision
 
 if __name__ == "__main__":
     # File names
-    output_file = "model_output_dictionaries\\output_file_" + model + ".pkl"
-    key_file = "answer_key.pkl"
+    model_results_filename = "results\\test_output_file_" + model + ".json"
+    answer_key_filename = "results\\answer_key.json"
 
-    # Load the dictionaries
-    output_dict, answer_key = load_dict_files(output_file, key_file)
-
-    # Clean Data
-    output_dict = clean_data(output_dict)
+    # Load files
+    model_results, answer_key = load_dict_files(model_results_filename, answer_key_filename)
+    
+    # Clean results
+    model_results = clean_results(model_results) #clean data
 
     # Evaluate metrics
-    metrics = evaluate_metrics(output_dict, answer_key)
+    accuracy = compute_accuracy(model_results, answer_key)
 
     # Print results
     print("Model: " + model)
     print("Evaluation Metrics:")
-    print(f"Accuracy: {metrics['accuracy']:.4f}")
-    print(f"Precision: {metrics['precision']:.4f}")
-    print(f"Recall: {metrics['recall']:.4f}")
+    print(f"Accuracy: {accuracy:.4f}")
