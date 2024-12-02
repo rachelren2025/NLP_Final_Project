@@ -80,7 +80,7 @@ def parse_data():
 
         # Construct the input string for the model
         inp_str = (
-                'Message: <' + i['0']
+                'Message: ' + i['0']
         )
 
         print(inp_str)
