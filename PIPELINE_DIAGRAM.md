@@ -1,6 +1,6 @@
 ```mermaid
 graph TD;
-    subgraph Pipeline["<span style='font-size:50;'>**Project Pipeline**</span>"]
+    subgraph Pipeline["<span style='font-size:20;'>**Project Pipeline**</span>"]
         subgraph Data[**MCQ Data File**]
             direction TB
             A[Message]
