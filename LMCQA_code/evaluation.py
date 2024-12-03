@@ -1,10 +1,11 @@
 import json
 import re
 from collections import Counter
-from sklearn.metrics import precision_score, recall_score, accuracy_score
+from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score
 
 model = "phi3_medium"
 test_results = False
+
 
 def load_dict_files(output_file, answer_key):
     with open(output_file, "rb") as f:
@@ -61,6 +62,7 @@ def compute_accuracy(model_results, answer_key):
     accuracy = (correct / total) if total > 0 else 0
     return accuracy
 
+
 def compute_mean_weighted_precision_recall(model_results, answer_key):
     # Convert predicted labels to integers
     y_true = []
@@ -74,6 +76,7 @@ def compute_mean_weighted_precision_recall(model_results, answer_key):
     precision = precision_score(y_true, y_pred, average='weighted', zero_division=0)
     recall = recall_score(y_true, y_pred, average='weighted', zero_division=0)
     return precision, recall
+
 
 def compute_weighted_accuracy(answer_key, system_output):
     from collections import Counter
@@ -91,6 +94,30 @@ def compute_weighted_accuracy(answer_key, system_output):
     return weighted_sum / total_weighted
 
 
+def compute_f1(precision, recall):
+    """
+    Compute the F1 score using precision and recall.
+    """
+    if precision + recall == 0:  # Avoid division by zero
+        return 0.0
+    f1 = 2 * (precision * recall) / (precision + recall)
+    return f1
+
+
+def compute_macro_f1(y_true, y_pred):
+    """
+    Compute the Macro F1 score (average F1 across all classes).
+    """
+    return f1_score(y_true, y_pred, average='macro', zero_division=0)
+
+
+def compute_micro_f1(y_true, y_pred):
+    """
+    Compute the Micro F1 score (aggregated metrics across all classes).
+    """
+    return f1_score(y_true, y_pred, average='micro', zero_division=0)
+
+
 if __name__ == "__main__":
     # File names
     if test_results:
@@ -106,12 +133,24 @@ if __name__ == "__main__":
     model_results = clean_results(model_results)  # clean data
 
     # Evaluate metrics
-    #accuracy = compute_accuracy(model_results, answer_key)
+    # accuracy = compute_accuracy(model_results, answer_key)
 
-    #weighted = weighted_accuracy(answer_key, model_results)
+    # weighted = weighted_accuracy(answer_key, model_results)
     accuracy = compute_accuracy(model_results, answer_key)
     weighted_accuracy = compute_weighted_accuracy(model_results, answer_key)
-    weighted_precision, weighted_recall= compute_mean_weighted_precision_recall(model_results, answer_key)
+    weighted_precision, weighted_recall = compute_mean_weighted_precision_recall(model_results, answer_key)
+    f1 = compute_f1(weighted_precision, weighted_recall)
+
+    # Prepare labels for macro/micro f1 scoring
+    y_true = []
+    y_pred = []
+    for prompt_id in answer_key.keys():
+        if prompt_id in model_results:
+            y_true.append(answer_key[prompt_id])
+            y_pred.append(int(model_results[prompt_id]))
+
+    macro_f1 = compute_macro_f1(y_true, y_pred)
+    micro_f1 = compute_micro_f1(y_true, y_pred)
 
     # Print results
     print("Model: " + model)
@@ -120,3 +159,6 @@ if __name__ == "__main__":
     print(f"weighted accuracy: {weighted_accuracy:.4f}")
     print(f"weighted precision: {weighted_precision:.4f}")
     print(f"weighted recall: {weighted_recall:.4f}")
+    print(f"F1 Score: {f1:.4f}")
+    print(f"Macro F1 Score: {macro_f1:.4f}")
+    print(f"Micro F1 Score: {micro_f1:.4f}")
