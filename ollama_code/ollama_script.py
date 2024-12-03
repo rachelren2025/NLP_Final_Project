@@ -79,13 +79,13 @@ def parse_data():
 
 def save_output_json(output_dict):
     if test:
-        with open("results\\test_output_file_" + model + ".json", "w", encoding='utf-8') as f:
+        with open("results/test_output_file_" + model + ".json", "w", encoding='utf-8') as f:
             json.dump(output_dict, f, indent=4, ensure_ascii=False)
     else:
-        with open("results\\output_file_" + model + ".json", "w", encoding='utf-8') as f:
+        with open("results/output_file_" + model + ".json", "w", encoding='utf-8') as f:
             json.dump(output_dict, f, indent=4, ensure_ascii=False)
 
-    print(f"Output dictionary saved to results\\output_file_{model}.json")
+    print(f"Output dictionary saved to results/output_file_{model}.json")
 
 
 start_time = time.time()

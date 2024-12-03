@@ -61,7 +61,6 @@ def compute_accuracy(model_results, answer_key):
     accuracy = (correct / total) if total > 0 else 0
     return accuracy
 
-
 def compute_mean_weighted_precision(model_results, answer_key):
     classes = {0, 1, 2, 3, 4, 9}
     # Convert predicted labels to integers
@@ -76,8 +75,7 @@ def compute_mean_weighted_precision(model_results, answer_key):
     precision = precision_score(y_true, y_pred, labels=classes, average='weighted', zero_division=0)
     return precision
 
-
-def weighted_accuracy(answer_key, system_output):
+def compute_weighted_accuracy(answer_key, system_output):
     from collections import Counter
     true_counts = Counter(answer_key.values())  # Total occurrences of each class
     weights = {c: count for c, count in true_counts.items()}  # Use class frequencies as weights
@@ -95,10 +93,7 @@ def weighted_accuracy(answer_key, system_output):
 
 if __name__ == "__main__":
     # File names
-    # Seems to be that \\ doesn't work for mac - use /
-    #model_results_filename = "results\\output_file_" + model + ".json"
-    model_results_filename = "results/output_file_llama3.2.json"
-    #answer_key_filename = "results\\answer_key.json"
+    model_results_filename = "results/output_file_" + model + ".json"
     answer_key_filename = "results/answer_key.json"
 
     # Load files
@@ -108,11 +103,11 @@ if __name__ == "__main__":
     model_results = clean_results(model_results)  # clean data
 
     # Evaluate metrics
-    #accuracy = compute_accuracy(model_results, answer_key)
-
-    weighted = weighted_accuracy(model_results, answer_key)
+    accuracy = compute_accuracy(model_results, answer_key)
+    weighted_accuracy = compute_weighted_accuracy(model_results, answer_key)
 
     # Print results
     print("Model: " + model)
     print("Evaluation Metrics:")
-    print(f"weighted: {weighted:.4f}")
+    print(f"accuracy: {accuracy:.4f}")
+    print(f"weighted accuracy: {weighted_accuracy:.4f}")
