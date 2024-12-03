@@ -3,7 +3,7 @@ import re
 from collections import Counter
 from sklearn.metrics import precision_score
 
-model = "llama3.2"
+model = "phi3"
 
 
 def load_dict_files(output_file, answer_key):
