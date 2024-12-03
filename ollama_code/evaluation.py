@@ -1,9 +1,9 @@
 import json
 import re
 from collections import Counter
-from sklearn.metrics import precision_score
+from sklearn.metrics import precision_score, recall_score, accuracy_score
 
-model = "phi3"
+model = "llama3.2"
 
 
 def load_dict_files(output_file, answer_key):
@@ -61,19 +61,19 @@ def compute_accuracy(model_results, answer_key):
     accuracy = (correct / total) if total > 0 else 0
     return accuracy
 
-def compute_mean_weighted_precision(model_results, answer_key):
-    classes = {0, 1, 2, 3, 4, 9}
+def compute_mean_weighted_precision_recall(model_results, answer_key):
     # Convert predicted labels to integers
     y_true = []
     y_pred = []
     for prompt_id in answer_key.keys():
         if prompt_id in model_results:
             y_true.append(answer_key[prompt_id])
-            y_pred.append(int(model_results[prompt_id]))  # Convert string to int
+            y_pred.append(int(model_results[prompt_id]))
 
     # Calculate the weighted mean precision
-    precision = precision_score(y_true, y_pred, labels=classes, average='weighted', zero_division=0)
-    return precision
+    precision = precision_score(y_true, y_pred, average='weighted', zero_division=0)
+    recall = recall_score(y_true, y_pred, average='weighted', zero_division=0)
+    return precision, recall
 
 def compute_weighted_accuracy(answer_key, system_output):
     from collections import Counter
@@ -104,10 +104,13 @@ if __name__ == "__main__":
 
     # Evaluate metrics
     accuracy = compute_accuracy(model_results, answer_key)
+    weighted_precision, weighted_recall= compute_mean_weighted_precision_recall(model_results, answer_key)
     weighted_accuracy = compute_weighted_accuracy(model_results, answer_key)
 
     # Print results
     print("Model: " + model)
     print("Evaluation Metrics:")
     print(f"accuracy: {accuracy:.4f}")
+    print(f"weighted precision: {weighted_precision:.4f}")
+    print(f"weighted recall: {weighted_recall:.4f}")
     print(f"weighted accuracy: {weighted_accuracy:.4f}")
