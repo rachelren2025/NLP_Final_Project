@@ -1,6 +1,6 @@
 ```mermaid
 graph TD;
-    subgraph Pipeline["Project Pipeline"]
+    subgraph Pipeline["<span style='font-size:35;'>**Project Pipeline**</span>"]
         subgraph Data[**MCQ Data File**]
             direction TB
             A[Message]
@@ -38,6 +38,6 @@ graph TD;
     class Evaluation comment
 
     %% Style
-    style Pipeline fill:#ffffff,stroke:#333,stroke-width:2px, padding:10px, font-size:30px;
+    style Pipeline fill:#f5f5f5,stroke:#333,stroke-width:2px, padding:10px, font-size:25spx;
 
 ```
