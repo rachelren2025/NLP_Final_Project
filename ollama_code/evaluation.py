@@ -3,8 +3,8 @@ import re
 from collections import Counter
 from sklearn.metrics import precision_score, recall_score, accuracy_score
 
-model = "llama3.2"
-
+model = "llama3.2-vision"
+test_results = False
 
 def load_dict_files(output_file, answer_key):
     with open(output_file, "rb") as f:
@@ -93,7 +93,10 @@ def compute_weighted_accuracy(answer_key, system_output):
 
 if __name__ == "__main__":
     # File names
-    model_results_filename = "results/output_file_" + model + ".json"
+    if test_results:
+        model_results_filename = "results/test_output_file_" + model + ".json"
+    else:
+        model_results_filename = "results/output_file_" + model + ".json"
     answer_key_filename = "results/answer_key.json"
 
     # Load files
@@ -104,13 +107,13 @@ if __name__ == "__main__":
 
     # Evaluate metrics
     accuracy = compute_accuracy(model_results, answer_key)
-    weighted_precision, weighted_recall= compute_mean_weighted_precision_recall(model_results, answer_key)
     weighted_accuracy = compute_weighted_accuracy(model_results, answer_key)
-
+    weighted_precision, weighted_recall= compute_mean_weighted_precision_recall(model_results, answer_key)
+    
     # Print results
     print("Model: " + model)
     print("Evaluation Metrics:")
     print(f"accuracy: {accuracy:.4f}")
+    print(f"weighted accuracy: {weighted_accuracy:.4f}")
     print(f"weighted precision: {weighted_precision:.4f}")
     print(f"weighted recall: {weighted_recall:.4f}")
-    print(f"weighted accuracy: {weighted_accuracy:.4f}")
