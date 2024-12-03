@@ -38,6 +38,6 @@ graph TD;
     class Evaluation comment
 
     %% Style
-    style Pipeline fill:#f5f5f5,stroke:#333,stroke-width:2px, padding:10px, font-size:25spx;
+    style Pipeline fill:#ffffff,stroke:#333,stroke-width:2px, padding:10px, font-size:30px;
 
 ```
