@@ -1,17 +1,15 @@
 import pandas as pd
 import subprocess
 import json
-import time
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
-import numpy as np
+
+similarity_output = "cosine_similarity_scores.json"
+responses_output = "response_for_cosine_similarity.json"
 
 # Initialize the embedding model
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')  # You can choose another pre-trained model
 
-output_dict = {}
-answer_key = {}
-similarity_scores = {}
 model = "llama3.2"
 # Set to True to test only the first 3 entries
 test = True
@@ -67,6 +65,9 @@ def prompt_file(inp):
 
 
 def parse_data():
+    similarity_scores = {}
+    output_dict = {}
+
     data = pd.read_csv('test.csv')
     json_data = eval(data.to_json(orient="records", indent=4))
 
@@ -103,10 +104,21 @@ def parse_data():
 
         # Store and print the similarity score
         similarity_scores[prompt_id] = similarity[0][0]
+        similarity_scores = {k: float(v) for k, v in similarity_scores.items()}  # Convert to float for json
         print(f"Cosine Similarity for Prompt ID {prompt_id}: {similarity[0][0]}")
 
     # Print all similarity scores
     print("All Similarity Scores:", similarity_scores)
+    print(output_dict)
+
+    with open(similarity_output, "w") as f:
+        json.dump(similarity_scores, f, indent=4)
+
+    with open(responses_output, "w") as f:
+        json.dump(output_dict, f, indent=4)
+
+    print("results dumped")
+
 
 
 if __name__ == "__main__":

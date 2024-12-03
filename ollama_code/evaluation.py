@@ -110,7 +110,7 @@ if __name__ == "__main__":
     # Evaluate metrics
     #accuracy = compute_accuracy(model_results, answer_key)
 
-    weighted = weighted_accuracy(model_results, answer_key)
+    weighted = weighted_accuracy(answer_key, model_results)
 
     # Print results
     print("Model: " + model)
