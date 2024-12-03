@@ -3,7 +3,7 @@ import re
 from collections import Counter
 from sklearn.metrics import precision_score, recall_score, accuracy_score
 
-model = "mistral"
+model = "phi3_medium"
 test_results = False
 
 def load_dict_files(output_file, answer_key):

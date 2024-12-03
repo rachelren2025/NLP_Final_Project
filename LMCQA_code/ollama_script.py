@@ -5,9 +5,9 @@ import json
 
 output_dict = {}
 answer_key = {}
-model = "llama3.2-vision"
+model = "phi3"
 # set to True to pass the first z into the model
-test = True
+test = False
 z = 10
 
 def prompt_file(inp):
