@@ -133,9 +133,6 @@ if __name__ == "__main__":
     model_results = clean_results(model_results)  # clean data
 
     # Evaluate metrics
-    # accuracy = compute_accuracy(model_results, answer_key)
-
-    # weighted = weighted_accuracy(answer_key, model_results)
     accuracy = compute_accuracy(model_results, answer_key)
     weighted_accuracy = compute_weighted_accuracy(model_results, answer_key)
     weighted_precision, weighted_recall = compute_mean_weighted_precision_recall(model_results, answer_key)
