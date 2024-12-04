@@ -3,7 +3,7 @@ import re
 from collections import Counter
 from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score
 
-model = "phi3_medium"
+model = "phi3"
 test_results = False
 
 
@@ -100,7 +100,7 @@ def compute_micro_f1(y_true, y_pred):
 if __name__ == "__main__":
     # File names
     if test_results:
-        model_results_filename = "results/test_output_file_" + model + ".json"
+        model_results_filename = "results/output_file_" + model + ".json"
     else:
         model_results_filename = "results/output_file_" + model + ".json"
     answer_key_filename = "results/answer_key.json"
