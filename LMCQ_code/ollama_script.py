@@ -5,10 +5,10 @@ import json
 
 output_dict = {}
 answer_key = {}
-model = "phi3"
+model = "llama3.1"
 # set to True to pass the first z into the model
 test = False
-z = 10
+z = 100
 
 def prompt_file(inp):
     # Send input to the process and get the output
@@ -25,16 +25,48 @@ def prompt_file(inp):
     )
 
     try:
+        # Just Multiple Choice Answer
+        # command = """
+
+        # Instruction: You will receive a message representing the context or facts of a legal case, followed by five 
+        # possible legal holdings. Your task is to select the holding that is most relevant and aligns with the legal 
+        # principles or facts in the message. Output only one number and nothing else at all.
+
+        # Format:
+
+        # Message: <Message> 0: <Option 0> 1: <Option 1> 2: <Option 2> 3: <Option 3> 4: <Option 4> Response: Return only the 
+        # number (0, 1, 2, 3, or 4) corresponding to the holding that is the most contextually relevant to the message.
+
+        # """
+
+        # Ouptut X
+        # command = """
+
+        # Instruction: You will receive a message representing the context or facts of a legal case, followed by five 
+        # possible legal holdings. Your task is to select the holding that is most relevant and aligns with the legal 
+        # principles or facts in the message. Output only one number or "X" if you are unsure of thethe correct answer.
+
+        # Format:
+
+        # Message: <Message> 0: <Option 0> 1: <Option 1> 2: <Option 2> 3: <Option 3> 4: <Option 4> Response: Return only the 
+        # number (0, 1, 2, 3, or 4) corresponding to the holding that is the most contextually relevant to the message or
+        # "X" if you are unsure of thethe correct answer.
+
+        # """
+        # Output Confidence Score
         command = """
 
         Instruction: You will receive a message representing the context or facts of a legal case, followed by five 
         possible legal holdings. Your task is to select the holding that is most relevant and aligns with the legal 
-        principles or facts in the message. Output only one number and nothing else at all.
+        principles or facts in the message. Output only one number and a confidence score between 0 to 1 with 0 being 
+        absolutely uncertain and 1 being absolutely certain.
 
         Format:
 
         Message: <Message> 0: <Option 0> 1: <Option 1> 2: <Option 2> 3: <Option 3> 4: <Option 4> Response: Return only the 
-        number (0, 1, 2, 3, or 4) corresponding to the holding that is the most contextually relevant to the message.
+        number (0, 1, 2, 3, or 4) corresponding to the holding that is the most contextually relevant to the message and a 
+        confidence score between 0 to 1 with 0 being absolutely uncertain and 1 being absolutely certain.
+        Example output: "Response: 3, 0.7"
 
         """
 
@@ -79,13 +111,13 @@ def parse_data():
 
 def save_output_json(output_dict):
     if test:
-        with open("results/test_output_file_" + model + ".json", "w", encoding='utf-8') as f:
+        with open("confidence_results/test_confidence_output_file_" + model + ".json", "w", encoding='utf-8') as f:
             json.dump(output_dict, f, indent=4, ensure_ascii=False)
     else:
-        with open("results/output_file_" + model + ".json", "w", encoding='utf-8') as f:
+        with open("confidence_results/confidence_output_file_" + model + ".json", "w", encoding='utf-8') as f:
             json.dump(output_dict, f, indent=4, ensure_ascii=False)
 
-    print(f"Output dictionary saved to results/output_file_{model}.json")
+    print(f"Output dictionary saved to confidence_results/confidence_output_file_{model}.json")
 
 
 start_time = time.time()
@@ -95,4 +127,4 @@ total_time = end_time - start_time
 
 save_output_json(output_dict)
 
-print(f"Total Execution Time for Llama Process: {total_time:.2f} seconds")
+print(f"Total Execution Time for {model} Process: {total_time:.2f} seconds")
