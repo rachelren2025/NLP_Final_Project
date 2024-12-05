@@ -1,6 +1,9 @@
 from transformers import AutoTokenizer, AutoModelForMultipleChoice
 import torch  # May need for GPU - ask GPT
 
+# Set a fixed random seed
+torch.manual_seed(42)
+
 """Load the dataset"""
 from datasets import load_dataset
 
@@ -10,10 +13,12 @@ ds = load_dataset("casehold/casehold", "all")
 # Loads a tokenizer for BERT. It converts text into token IDs for input into the model.#
 
 # Load LegalBERT tokenizer and model
-tokenizer = AutoTokenizer.from_pretrained("nlpaueb/legal-bert-base-uncased")
-model = AutoModelForMultipleChoice.from_pretrained("nlpaueb/legal-bert-base-uncased")
+tokenizer = AutoTokenizer.from_pretrained("zlucia/legalbert")
+model = AutoModelForMultipleChoice.from_pretrained("zlucia/legalbert")
 
 print("LegalBERT loaded successfully!")
+
+model.eval()  # For deterministic output (I might be wrong)
 
 # Get the first example from the file - will need to adjust for all 20k whatever
 first_example = ds["train"][0]
@@ -48,7 +53,9 @@ inputs = {
 
 # Forward pass through BERT
 outputs = model(**inputs)
+print(outputs)
 logits = outputs.logits  # Returns logits (unnormalized scores) for each of the 5 choices.
+#print(logits)
 
 # Interpret logits - Finds the index of the maximum logit along the choice dimension (best answer).
 predicted_label = logits.argmax(dim=-1).item()
