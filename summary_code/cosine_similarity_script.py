@@ -17,23 +17,29 @@ model = "llama3"
 test = True
 z = 3
 
+
 # Metric functions
 def dot_product(vec1, vec2):
     return np.dot(vec1, vec2)
 
+
 def euclidean_distance(vec1, vec2):
     return np.sqrt(np.sum((vec1 - vec2) ** 2))
 
+
 def manhattan_distance(vec1, vec2):
     return np.sum(np.abs(vec1 - vec2))
+
 
 def jaccard_similarity(vec1, vec2):
     intersection = np.minimum(vec1, vec2).sum()
     union = np.maximum(vec1, vec2).sum()
     return intersection / union if union != 0 else 0.0
 
+
 similarity_output = model + "_cosine_similarity_scores.json"
 responses_output = model + "_cosine_similarity_response.json"
+
 
 def prompt_file(inp):
     # Send input to the process and get the output
@@ -80,6 +86,7 @@ def prompt_file(inp):
         print("Command failed with return code", proc.returncode)
         return "Failed"
 
+
 def parse_data():
     similarity_scores = {}
     additional_metrics = {}
@@ -125,9 +132,9 @@ def parse_data():
         euclidean = euclidean_distance(model_embedding, key_embedding)
         manhattan = manhattan_distance(model_embedding, key_embedding)
         jaccard = jaccard_similarity(model_embedding, key_embedding)
-    # Print all similarity scores
-    # print("All Similarity Scores:", similarity_scores)
-    # print(output_dict)
+        # Print all similarity scores
+        # print("All Similarity Scores:", similarity_scores)
+        # print(output_dict)
 
         additional_metrics[prompt_id] = {
             "dot_product": float(dot),  # Convert to Python-native float
@@ -153,6 +160,7 @@ def parse_data():
         json.dump(additional_metrics, f, indent=4)
 
     print("Results dumped")
+
 
 if __name__ == "__main__":
     parse_data()

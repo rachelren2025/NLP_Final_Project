@@ -1,20 +1,20 @@
 {
     "47821": {
-        "dot_product": 0.3544466495513916,
-        "euclidean_distance": 1.1362687349319458,
-        "manhattan_distance": 17.406949996948242,
-        "jaccard_similarity": -1.03290593624115
+        "dot_product": 0.45857298374176025,
+        "euclidean_distance": 1.040602684020996,
+        "manhattan_distance": 16.04701042175293,
+        "jaccard_similarity": -1.056368350982666
     },
     "47822": {
-        "dot_product": 0.5265091061592102,
-        "euclidean_distance": 0.9731299877166748,
-        "manhattan_distance": 14.936737060546875,
-        "jaccard_similarity": -1.0223522186279297
+        "dot_product": 0.5313868522644043,
+        "euclidean_distance": 0.9681045413017273,
+        "manhattan_distance": 14.93294906616211,
+        "jaccard_similarity": -1.0165972709655762
     },
     "47823": {
-        "dot_product": 0.3067442774772644,
-        "euclidean_distance": 1.177502155303955,
-        "manhattan_distance": 17.944530487060547,
-        "jaccard_similarity": -1.0279169082641602
+        "dot_product": 0.3488214910030365,
+        "euclidean_distance": 1.1412086486816406,
+        "manhattan_distance": 17.602603912353516,
+        "jaccard_similarity": -1.0369082689285278
     }
 }
