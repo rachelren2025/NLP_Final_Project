@@ -37,7 +37,7 @@ class ModelArguments:
 	"""
 
 	model_name_or_path: str = field(
-		metadata={"help": "zlucia/legalbert"}
+		metadata={"help": "zlucia/bert-double"}
 	)
 	config_name: Optional[str] = field(
 		default=None, metadata={"help": "Pretrained config name or path if not the same as model_name"}
