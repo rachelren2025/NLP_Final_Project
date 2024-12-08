@@ -309,15 +309,37 @@ def convert_examples_to_features(
             else:
                 text_b = example.question + " " + ending
 
-            inputs = tokenizer(
-                text_a,
-                text_b,
-                add_special_tokens=True,
-                max_length=max_length,
-                padding="max_length",
-                truncation=True,
-                return_overflowing_tokens=True,
-            )
+            # inputs = tokenizer(
+            #     text_a,
+            #     text_b,
+            #     add_special_tokens=True,
+            #     max_length=max_length,
+            #     padding="max_length",
+            #     truncation=True,
+            #     return_overflowing_tokens=True,
+            # )
+            try:
+                inputs = tokenizer(
+                    text_a,
+                    text_b,
+                    add_special_tokens=True,
+                    max_length=max_length,
+                    padding="max_length",
+                    truncation="longest_first",  # Start with "longest_first"
+                )
+            except ValueError as e:
+                # Handle truncation error dynamically
+                if "longest_first" in str(e):
+                    inputs = tokenizer(
+                        text_a,
+                        text_b,
+                        add_special_tokens=True,
+                        max_length=max_length,
+                        padding="max_length",
+                        truncation="only_first",  # Fall back to "only_first"
+                    )
+                else:
+                    raise e
 
             choices_inputs.append(inputs)
 

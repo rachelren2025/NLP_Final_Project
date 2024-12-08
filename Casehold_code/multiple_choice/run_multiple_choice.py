@@ -4,7 +4,9 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 import numpy as np
-from datasets import load_metric
+#from datasets import load
+from evaluate import load
+from scipy.special import softmax
 
 import torch
 from torch.utils.data import DataLoader
@@ -76,7 +78,7 @@ def main():
 
 	parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
 	# Add custom arguments for computing pre-train loss
-	parser.add_argument("--ptl", type=bool, default=True)
+	parser.add_argument("--ptl", type=bool, default=False)
 	model_args, data_args, training_args, custom_args = parser.parse_args_into_dataclasses()
 
 	if (
@@ -139,6 +141,8 @@ def main():
 		config=config,
 		cache_dir=model_args.cache_dir,
 	)
+	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+	model.to(device)
 
 	train_dataset = None
 	eval_dataset = None
@@ -186,11 +190,11 @@ def main():
 	# Define custom compute_metrics function, returns macro F1 metric for CaseHOLD task
 	def compute_metrics(p: EvalPrediction):
 		preds = np.argmax(p.predictions, axis=1)
-		metric = load_metric("f1")
+		metric = load("f1")
 		# Compute macro F1 for 5-class CaseHOLD task
 		f1 = metric.compute(predictions=preds, references=p.label_ids, average='macro')
 		return f1
-
+		
 	# Initialize our Trainer
 	trainer = Trainer(
 		model=model,
@@ -232,8 +236,16 @@ def main():
 		if training_args.do_predict:
 			logger.info("*** Predict ***")
 
-			predictions = trainer.predict(test_dataset=eval_dataset).predictions
-			predictions = np.argmax(predictions, axis=1)
+			raw_logits = trainer.predict(test_dataset=eval_dataset).predictions
+			
+			# Save probabilites
+			probabilities = softmax(raw_logits, axis=1)
+			output_probs_file = os.path.join(training_args.output_dir, "probabilities.csv")
+			if trainer.is_world_process_zero():
+				np.savetxt(output_probs_file, probabilities, delimiter=',', fmt='%.6f')
+
+			# Save predictions
+			predictions = np.argmax(raw_logits, axis=1)
 
 			output_preds_file = os.path.join(training_args.output_dir, "predictions.csv")
 			if trainer.is_world_process_zero():
