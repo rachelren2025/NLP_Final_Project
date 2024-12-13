@@ -6,10 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="11b04741-cfb6-4f4d-adf3-695c615f990f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/summary_code/additional_metrics.json" beforeDir="false" afterPath="$PROJECT_DIR$/summary_code/additional_metrics.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/summary_code/cosine_similarity_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/summary_code/cosine_similarity_script.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/summary_code/llama3_cosine_similarity_response.json" beforeDir="false" afterPath="$PROJECT_DIR$/summary_code/llama3_cosine_similarity_response.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/summary_code/llama3_cosine_similarity_scores.json" beforeDir="false" afterPath="$PROJECT_DIR$/summary_code/llama3_cosine_similarity_scores.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

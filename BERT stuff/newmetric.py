@@ -1,20 +1,20 @@
 import json
-
-from transformers import AutoTokenizer, AutoModelForMultipleChoice
-from bert_score import score
-import torch
-import itertools
 import math
-
+from bert_score import score
+import itertools
+import torch
 
 def compute_similarity(holdings):
     """
     Compute pairwise similarity between holdings using BERTScore.
     Returns the geometric mean of all F1 scores.
+    Args:
+        holdings: List of answer choices for a question.
     """
     f1_scores = []
     pairs = list(itertools.combinations(range(len(holdings)), 2))
 
+    # Compute BERTScore F1 for each pair
     for i, j in pairs:
         _, _, F1 = score([holdings[i]], [holdings[j]], lang="en", verbose=False)
         f1_scores.append(F1.item())
@@ -24,13 +24,12 @@ def compute_similarity(holdings):
     return geometric_mean_f1
 
 
-def newmetric(holdings, citing_prompt, logits, true_label):
+def newmetric_with_precomputed_confidence(holdings, confidence_scores, true_label):
     """
-    Compute the new metric by combining BERT confidence, similarity scores, and reward/penalty.
+    Compute the new metric using precomputed confidence scores and dynamically computed similarity.
     Args:
-        holdings: List of 5 holdings.
-        citing_prompt: The citing prompt as input.
-        logits: BERT model logits for each holding.
+        holdings: List of 5 holdings (answer choices).
+        confidence_scores: List of softmax probabilities for each choice.
         true_label: The correct label (0-4).
     Returns:
         metrics_dict: A dictionary containing correctness, similarity score, confidence, and newmetric.
@@ -38,10 +37,9 @@ def newmetric(holdings, citing_prompt, logits, true_label):
     # Step 1: Compute pairwise similarity geometric mean
     similarity_score = compute_similarity(holdings)
 
-    # Step 2: Compute BERT confidence score
-    confidence_scores = torch.softmax(logits, dim=-1)  # Normalize logits to probabilities
-    predicted_label = logits.argmax(dim=-1).item()
-    predicted_confidence = confidence_scores[0, predicted_label].item()
+    # Step 2: Find the predicted label and confidence
+    predicted_label = confidence_scores.index(max(confidence_scores))  # Index of the highest probability
+    predicted_confidence = max(confidence_scores)
 
     # Step 3: Correctness
     correct = predicted_label == true_label
@@ -62,55 +60,32 @@ def newmetric(holdings, citing_prompt, logits, true_label):
 
 # Example Usage
 if __name__ == "__main__":
-    # Load dataset and model
-    from datasets import load_dataset
-
-    ds = load_dataset("casehold/casehold", "all")
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-    model = AutoModelForMultipleChoice.from_pretrained("bert-base-uncased")
+    # Load precomputed data (example file: precomputed_confidence.json)
+    with open("zlucia_legalbert_casehold_results.json", "r") as f:
+        data = json.load(f)
 
     results = {}  # Dictionary to store results for all examples
 
-    # Iterate through the first few examples
-    for idx, example in enumerate(ds["train"]):
-        citing_prompt = example["citing_prompt"]
-        holdings = [
-            example["holding_0"],
-            example["holding_1"],
-            example["holding_2"],
-            example["holding_3"],
-            example["holding_4"],
-        ]
-        true_label = example["label"]
-        example_id = example["example_id"]
+    # Iterate through the examples
+    for example in data:
+        example_id = example["example_index"]
+        holdings = example["holdings"]  # List of 5 answer choices
+        confidence_scores = example["probabilities"]  # Precomputed softmax probabilities
+        true_label = example["correct_label"]
 
-        # Tokenize input for BERT
-        inputs = tokenizer(
-            [citing_prompt] * 5,  # Repeat the prompt for each holding
-            holdings,  # Holdings to compare
-            truncation=True,
-            padding="max_length",
-            max_length=512,
-            return_tensors="pt",
-        )
-        inputs = {key: value.unsqueeze(0) for key, value in inputs.items()}  # Add batch dimension
+        # Compute the new metric
+        metrics = newmetric_with_precomputed_confidence(holdings, confidence_scores, true_label)
 
-        # Forward pass through BERT
-        outputs = model(**inputs)
-        logits = outputs.logits
-
-
-        # Compute new metric
-        metrics = newmetric(holdings, citing_prompt, logits, true_label)
-
-        # Store results in dictionary
+        # Store results
         results[example_id] = metrics
 
-        # Print for the first 3 examples (testing purposes)
+        # Print results for verification
         print(f"\nID: {example_id}")
         print(f"Metrics: {metrics}")
-        if idx >= 2:  # Break after 3 examples for testing
-            break
 
-    with open('newmetric.txt', 'w') as f:
+        # break
+
+    # Save results to a file
+    with open("newmetric_results.json", "w") as f:
         json.dump(results, f, indent=4)
+    print("\nResults saved to 'newmetric_results.json'")
