@@ -1,29 +1,28 @@
 import json
-import math
-from bert_score import score
 import itertools
-from datasets import load_dataset
+from bert_score import score
 import torch
+from datasets import load_dataset
 
-def compute_similarity(holdings, device):
+
+def compute_pairwise_scores(holdings, device):
     """
-    Compute pairwise similarity between holdings using BERTScore.
-    Returns the geometric mean of all F1 scores.
+    Compute pairwise BERTScore F1 for all combinations of holdings.
     Args:
         holdings: List of answer choices for a question.
         device: The device to use (CPU or CUDA).
+    Returns:
+        pairwise_scores: List of BERTScore F1 scores for each pair.
     """
-    f1_scores = []
+    pairwise_scores = []
     pairs = list(itertools.combinations(range(len(holdings)), 2))
 
-    # Compute BERTScore F1 for each pair of holdings
+    # Compute BERTScore F1 for each pair
     for i, j in pairs:
         _, _, F1 = score([holdings[i]], [holdings[j]], lang="en", verbose=False, device=device)
-        f1_scores.append(F1.item())
-
-    # Compute geometric mean of pairwise F1 scores
-    geometric_mean_f1 = math.prod(f1_scores) ** (1 / len(f1_scores)) if f1_scores else 0.0
-    return round(geometric_mean_f1, 4)  # Round for cleaner output
+        pairwise_scores.append(F1.item())
+    
+    return pairwise_scores
 
 
 if __name__ == "__main__":
@@ -34,9 +33,9 @@ if __name__ == "__main__":
     # Load the CaseHold dataset
     ds = load_dataset("casehold/casehold", "all")
 
-    results = {}  # Dictionary to store BERTScore results
+    results = {}  # Dictionary to store pairwise BERTScore results
 
-    # Iterate through the first N examples (you can remove [:N] to run on the full dataset)
+    # Iterate through the examples in the validation set
     for example in ds["validation"]:
         example_id = example["example_id"]
         holdings = [
@@ -47,20 +46,21 @@ if __name__ == "__main__":
             example["holding_4"]
         ]
 
-        # Compute BERTScore similarity using GPU
-        bertscore = compute_similarity(holdings, device=device)
+        # Compute pairwise BERTScore for the holdings
+        pairwise_scores = compute_pairwise_scores(holdings, device=device)
 
-        # Store result as {id: score}
-        results[example_id] = bertscore
+        # Store result as {id: [scores]}
+        results[example_id] = pairwise_scores
 
         # Print progress for verification
-        print(f"Processed Example ID: {example_id}, BERTScore: {bertscore}")
+        print(f"Processed Example ID: {example_id}, Pairwise Scores: {pairwise_scores}")
 
         # Uncomment to limit to a subset of examples for testing
-        # break
+        # if example_id == 42508 + 30:
+        #     break
 
     # Save the results to a JSON file
-    with open("bertscore_results.json", "w") as f:
+    with open("pairwise_scores.json", "w") as f:
         json.dump(results, f, indent=4)
 
-    print("\nBERTScore results saved to 'bertscore_results.json'.")
+    print("\nPairwise scores saved to 'pairwise_scores.json'.")
