@@ -37,7 +37,7 @@ if __name__ == "__main__":
     results = {}  # Dictionary to store BERTScore results
 
     # Iterate through the first N examples (you can remove [:N] to run on the full dataset)
-    for example in ds["train"]:
+    for example in ds["validation"]:
         example_id = example["example_id"]
         holdings = [
             example["holding_0"],
