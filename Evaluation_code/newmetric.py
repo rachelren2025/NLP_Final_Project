@@ -1,91 +1,117 @@
 import json
-import math
-from bert_score import score
-import itertools
-import torch
+import numpy as np
 
-def compute_similarity(holdings):
+
+def compute_new_metric(difficulty_file, confidence_file):
     """
-    Compute pairwise similarity between holdings using BERTScore.
-    Returns the geometric mean of all F1 scores.
+    Compute the new metric S_i = D_i * C_i * V_i for each question.
+
     Args:
-        holdings: List of answer choices for a question.
+        difficulty_file (str): Path to the file containing question difficulty levels.
+        confidence_file (str): Path to the file containing confidence scores and correctness.
+        output_file (str): Path to save the final results.
     """
-    f1_scores = []
-    pairs = list(itertools.combinations(range(len(holdings)), 2))
 
-    # Compute BERTScore F1 for each pair
-    for i, j in pairs:
-        _, _, F1 = score([holdings[i]], [holdings[j]], lang="en", verbose=False)
-        f1_scores.append(F1.item())
-
-    # Compute geometric mean of pairwise F1 scores
-    geometric_mean_f1 = math.prod(f1_scores) ** (1 / len(f1_scores)) if f1_scores else 0.0
-    return geometric_mean_f1
-
-
-def newmetric_with_precomputed_confidence(holdings, confidence_scores, true_label):
-    """
-    Compute the new metric using precomputed confidence scores and dynamically computed similarity.
-    Args:
-        holdings: List of 5 holdings (answer choices).
-        confidence_scores: List of softmax probabilities for each choice.
-        true_label: The correct label (0-4).
-    Returns:
-        metrics_dict: A dictionary containing correctness, similarity score, confidence, and newmetric.
-    """
-    # Step 1: Compute pairwise similarity geometric mean
-    similarity_score = compute_similarity(holdings)
-
-    # Step 2: Find the predicted label and confidence
-    predicted_label = confidence_scores.index(max(confidence_scores))  # Index of the highest probability
-    predicted_confidence = max(confidence_scores)
-
-    # Step 3: Correctness
-    correct = predicted_label == true_label
-
-    # Step 4: Combine confidence, similarity, and correctness into the final metric
-    reward_penalty = 1 if correct else -1
-    new_metric = predicted_confidence * similarity_score * reward_penalty
-
-    # Step 5: Return metrics as a dictionary
-    metrics_dict = {
-        'correct': correct,
-        'similarity_score': round(similarity_score, 4),
-        'confidence': round(predicted_confidence, 4),
-        'newmetric': round(new_metric, 4)
+    # Define difficulty multipliers for each quarter
+    difficulty_multipliers = {
+        "q1": 0.25,  # Easiest questions
+        "q2": 0.5,
+        "q3": 0.75,
+        "q4": 1.0  # Hardest questions
     }
-    return metrics_dict
+
+    # Step 1: Load input files
+    with open(difficulty_file, "r") as f:
+        difficulty_data = json.load(f)  # Format: {id: "q1", ...}
+
+    with open(confidence_file, "r") as f:
+        confidence_data = f.readlines()
+
+    softmax_results = []  # Store softmax probabilities for all examples
+
+    for i in confidence_data:
+        # Convert list elements to float
+        i = np.array([float(x) for x in i.split(',')])
+
+        # Compute softmax
+        exp_values = np.exp(i - np.max(i))  # Numerical stability: subtract max(i)
+        probabilities = exp_values / np.sum(exp_values)
+        softmax_results.append(probabilities.tolist())  # Append softmax probabilities
+
+    dev_file_results = []
+    with open(dev_file, 'r') as d:
+        dev_file_results = json.load(d)
+
+    i = 0
+    results = []
+    for key, val in difficulty_data.items():
+        r = softmax_results[i]
+        bert_output = r.index(max(r))
+        output_dict = dev_file_results[i]
+
+        output_dict["softmax_scores"] = r
+        output_dict["bert_choice"] = bert_output
+        output_dict["correctness"] = output_dict["bert_choice"] == output_dict["correct_label"]
+        output_dict["difficulty"] = difficulty_data[key]
+        output_dict["new_metric"] = max(r) * output_dict["difficulty"] * (
+            1 if output_dict["bert_choice"] == output_dict["correct_label"] else -1)
+        results.append(output_dict)
+
+        i += 1
+
+    with open('parsed_dev_file_with_newmetric.json', 'w') as out:
+        json.dump(results, out, indent=4)
 
 
-# Example Usage
-if __name__ == "__main__":
-    # Load precomputed data (example file: precomputed_confidence.json)
-    with open("zlucia_legalbert_casehold_results.json", "r") as f:
+def split_quartiles_by_bertscore(file_path):
+    """
+    Split the data into quartiles based on difficulty (BERTScore)
+    and compute the average new_metric for each quartile.
+
+    Args:
+        file_path (str): Path to the input JSON file.
+
+    Returns:
+        dict: Average new_metric for each quartile.
+    """
+    # Step 1: Load the data
+    with open(file_path, 'r') as f:
         data = json.load(f)
 
-    results = {}  # Dictionary to store results for all examples
+    # Step 2: Sort data by difficulty (BERTScore) in ascending order
+    sorted_data = sorted(data, key=lambda x: x['difficulty'])
 
-    # Iterate through the examples
-    for example in data:
-        example_id = example["example_index"]
-        holdings = example["holdings"]  # List of 5 answer choices
-        confidence_scores = example["probabilities"]  # Precomputed softmax probabilities
-        true_label = example["correct_label"]
+    # Step 3: Split into 4 quartiles
+    q1, q2, q3, q4 = np.array_split(sorted_data, 4)
 
-        # Compute the new metric
-        metrics = newmetric_with_precomputed_confidence(holdings, confidence_scores, true_label)
+    # Step 4: Compute average new_metric for each quartile
+    def compute_avg_newmetric(quartile):
+        return round(np.mean([entry['new_metric'] for entry in quartile]), 4)
 
-        # Store results
-        results[example_id] = metrics
+    quartile_averages = {
+        "Q1 (Easiest)": compute_avg_newmetric(q1),
+        "Q2": compute_avg_newmetric(q2),
+        "Q3": compute_avg_newmetric(q3),
+        "Q4 (Hardest)": compute_avg_newmetric(q4)
+    }
 
-        # Print results for verification
-        print(f"\nID: {example_id}")
-        print(f"Metrics: {metrics}")
+    return quartile_averages
 
-        # break
 
-    # Save results to a file
-    with open("newmetric_results.json", "w") as f:
-        json.dump(results, f, indent=4)
-    print("\nResults saved to 'newmetric_results.json'")
+
+if __name__ == "__main__":
+    # Input file paths
+    difficulty_file = "./bertscore_results.json"  # File 1: {id: "q1", "q2", ...}
+    confidence_file = "../Casehold_code/output/bert-double/probabilities.csv"  # Line 1 corresponds to first id
+    dev_file = "./parsed_dev_file.json"
+    output_file = "new_metric_results.json"
+
+    #compute_new_metric(difficulty_file, confidence_file)
+    split_quartiles_by_bertscore('parsed_dev_file_with_newmetric.json')
+
+    quartile_results = split_quartiles_by_bertscore('parsed_dev_file_with_newmetric.json')
+    # Print the results
+    for quartile, avg in quartile_results.items():
+        print(f"{quartile}: {avg}")
+
+
