@@ -2,24 +2,7 @@ import json
 import numpy as np
 
 
-def compute_new_metric(difficulty_file, confidence_file):
-    """
-    Compute the new metric S_i = D_i * C_i * V_i for each question.
-
-    Args:
-        difficulty_file (str): Path to the file containing question difficulty levels.
-        confidence_file (str): Path to the file containing confidence scores and correctness.
-        output_file (str): Path to save the final results.
-    """
-
-    # Define difficulty multipliers for each quarter
-    difficulty_multipliers = {
-        "q1": 0.25,  # Easiest questions
-        "q2": 0.5,
-        "q3": 0.75,
-        "q4": 1.0  # Hardest questions
-    }
-
+def combine_files_before_newmetric(difficulty_file, confidence_file, dev_file):
     # Step 1: Load input files
     with open(difficulty_file, "r") as f:
         difficulty_data = json.load(f)  # Format: {id: "q1", ...}
@@ -38,7 +21,6 @@ def compute_new_metric(difficulty_file, confidence_file):
         probabilities = exp_values / np.sum(exp_values)
         softmax_results.append(probabilities.tolist())  # Append softmax probabilities
 
-    dev_file_results = []
     with open(dev_file, 'r') as d:
         dev_file_results = json.load(d)
 
@@ -53,50 +35,74 @@ def compute_new_metric(difficulty_file, confidence_file):
         output_dict["bert_choice"] = bert_output
         output_dict["correctness"] = output_dict["bert_choice"] == output_dict["correct_label"]
         output_dict["difficulty"] = difficulty_data[key]
-        output_dict["new_metric"] = max(r) * output_dict["difficulty"] * (
-            1 if output_dict["bert_choice"] == output_dict["correct_label"] else -1)
+
         results.append(output_dict)
 
         i += 1
 
-    with open('parsed_dev_file_with_newmetric.json', 'w') as out:
+    with open('parsed_dev_file_with_bert_score.json', 'w') as out:
         json.dump(results, out, indent=4)
 
 
-def split_quartiles_by_bertscore(file_path):
+def calculate_new_metric(input_file, output_file):
     """
-    Split the data into quartiles based on difficulty (BERTScore)
-    and compute the average new_metric for each quartile.
+    Split questions into quartiles based on difficulty, assign weights, compute new metric,
+    and print the average new_metric for each quartile.
 
     Args:
-        file_path (str): Path to the input JSON file.
-
-    Returns:
-        dict: Average new_metric for each quartile.
+        input_file (str): Path to the JSON file containing question data.
+        output_file (str): Path to save the updated JSON file with new metric.
     """
     # Step 1: Load the data
-    with open(file_path, 'r') as f:
+    with open(input_file, 'r') as f:
         data = json.load(f)
 
-    # Step 2: Sort data by difficulty (BERTScore) in ascending order
+    # Step 2: Sort data by difficulty in ascending order
     sorted_data = sorted(data, key=lambda x: x['difficulty'])
 
     # Step 3: Split into 4 quartiles
-    q1, q2, q3, q4 = np.array_split(sorted_data, 4)
+    quartiles = np.array_split(sorted_data, 4)
 
-    # Step 4: Compute average new_metric for each quartile
-    def compute_avg_newmetric(quartile):
-        return round(np.mean([entry['new_metric'] for entry in quartile]), 4)
+    # Step 4: Define weights for each quartile
+    difficulty_weights = [0.25, 0.5, 0.75, 1.0]  # Q1 -> Q4
 
-    quartile_averages = {
-        "Q1 (Easiest)": compute_avg_newmetric(q1),
-        "Q2": compute_avg_newmetric(q2),
-        "Q3": compute_avg_newmetric(q3),
-        "Q4 (Hardest)": compute_avg_newmetric(q4)
-    }
+    # Step 5: Compute the new metric and track averages
+    results = []
+    quartile_sums = [0, 0, 0, 0]  # To store sum of new_metric for each quartile
+    quartile_counts = [0, 0, 0, 0]  # To count the number of items in each quartile
 
-    return quartile_averages
+    for i, quartile in enumerate(quartiles):
+        weight = difficulty_weights[i]  # Weight for this quartile
 
+        for question in quartile:
+            confidence = max(question["softmax_scores"])  # Highest softmax score (C_i)
+            correctness = 1 if question["bert_choice"] == question["correct_label"] else -1  # Correctness (V_i)
+
+            # Compute new metric: S_i = D_i * C_i * V_i
+            new_metric = round(weight * confidence * correctness, 4)
+
+            # Update question with the new metric
+            question.update({
+                "difficulty_weight": weight,
+                "new_metric": new_metric
+            })
+            results.append(question)
+
+            # Track sums and counts for averages
+            quartile_sums[i] += new_metric
+            quartile_counts[i] += 1
+
+    # Step 6: Save updated data to output file
+    with open(output_file, 'w') as out:
+        json.dump(results, out, indent=4)
+
+    # Step 7: Print average new_metric for each quartile
+    print("Average new_metric per quartile:")
+    for i, (total, count) in enumerate(zip(quartile_sums, quartile_counts)):
+        average = round(total / count, 4) if count > 0 else 0.0
+        print(f"Q{i + 1} (Weight: {difficulty_weights[i]}): {average}")
+
+    print(f"Results with new metric saved to '{output_file}'")
 
 
 if __name__ == "__main__":
@@ -104,14 +110,8 @@ if __name__ == "__main__":
     difficulty_file = "./bertscore_results.json"  # File 1: {id: "q1", "q2", ...}
     confidence_file = "../Casehold_code/output/bert-double/probabilities.csv"  # Line 1 corresponds to first id
     dev_file = "./parsed_dev_file.json"
+
+    combine_files_before_newmetric(difficulty_file, confidence_file, dev_file)
+
     output_file = "new_metric_results.json"
-
-    #compute_new_metric(difficulty_file, confidence_file)
-    split_quartiles_by_bertscore('parsed_dev_file_with_newmetric.json')
-
-    quartile_results = split_quartiles_by_bertscore('parsed_dev_file_with_newmetric.json')
-    # Print the results
-    for quartile, avg in quartile_results.items():
-        print(f"{quartile}: {avg}")
-
-
+    calculate_new_metric("parsed_dev_file_with_bert_score.json", output_file)
