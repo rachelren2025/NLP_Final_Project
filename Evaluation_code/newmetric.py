@@ -22,17 +22,23 @@ def combine_parsed_dev_file_with_quartile_probabilities_correctness(quartiles_fi
     probabilities = [x.strip().split(',') for x in probabilities]
 
     count = 0
+    results = []
     for item in dev_contents:
         item['prediction'] = str(predictions[count])[0]
         item['quartile'] = quartiles[item['id']]
         item['softmax_probabilities'] = [float(y) for y in probabilities[count]]
+
         if item['prediction'] == item['correct_label']:
             item['newmetric_score'] = calculate_new_metric(True, item['quartile'], item['softmax_probabilities'])
         else:
             item['newmetric_score'] = calculate_new_metric(False, item['quartile'], item['softmax_probabilities'])
         print(item)
-        break
+
+        results.append(item)
         count += 1
+
+    with open(output_file, 'w') as g:
+        json.dump(results, g, indent=4)
 
 
 # if model is correct, 1 * max(softmax_probabilities) * q1 = 0.25... (rewarded less for easier q)
@@ -62,11 +68,17 @@ def calculate_new_metric(correct: bool, quartile, probabilities):
 bert_double_prob_file = "../Casehold_code/output/bert-double/probabilities.csv"
 bert_double_predictions_file = "../Casehold_code/output/bert-double/predictions.csv"
 
+legal_bert_prob_file = "../Casehold_code/output/legal-bert/probabilities.csv"
+legal_bert_predictions_file = "../Casehold_code/output/legal-bert/predictions.csv"
+
+custom_prob_file = "../Casehold_code/output/custom-legal-bert/probabilities.csv"
+custom_predictions_file = "../Casehold_code/output/custom-legal-bert/predictions.csv"
+
 
 def main():
     combine_parsed_dev_file_with_quartile_probabilities_correctness(
-        '../Evaluation_code/split_datasets/GM_sorted_questions.json', bert_double_prob_file, 'parsed_dev_file.json',
-        bert_double_predictions_file, 'bert_double_results.json')
+        '../Evaluation_code/split_datasets/GM_sorted_questions.json', custom_prob_file, 'parsed_dev_file.json',
+        custom_predictions_file, 'split_datasets/newmetric_results/custom_legal_bert_results.json')
 
 
 main()
