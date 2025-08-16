@@ -1,6 +1,6 @@
 # NLP Final Project (Python)
 New York University – College of Arts and Science
-Course Context
+## Course Context
 This repository contains the group final project for Natural Language Processing at NYU. Our team focused on applying NLP to the domain of legal informatics, specifically evaluating large language models (LLMs) for legal case analysis and question answering. The work emphasized both standard NLP workflows—preprocessing, feature engineering, model training—and domain-specific challenges where correctness has heightened importance due to real-world legal consequences.
 
 ## Summary
