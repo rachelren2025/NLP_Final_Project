@@ -3,6 +3,8 @@ New York University – College of Arts and Science
 ## Course Context
 This repository contains the group final project for Natural Language Processing at NYU. Our team focused on applying NLP to the domain of legal informatics, specifically evaluating large language models (LLMs) for legal case analysis and question answering. The work emphasized both standard NLP workflows—preprocessing, feature engineering, model training—and domain-specific challenges where correctness has heightened importance due to real-world legal consequences.
 
+**Tech Stack**: Python · NLTK · NumPy · Pandas · Jupyter · Transformers
+
 ## Project Highlights
 - **Domain-specific task** — Applied NLP methods to Legal Question Answering (LQA), where accuracy and reliability are critical.
 - **Model Comparison** — Trained and evaluated BERT-Double, Legal-BERT, and a Custom-Legal BERT model.
