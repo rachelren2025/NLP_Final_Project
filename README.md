@@ -10,7 +10,7 @@ This repository contains the group final project for Natural Language Processing
 - **Model Comparison** — Trained and evaluated BERT-Double, Legal-BERT, and a Custom-Legal BERT model.
 - **Novel Metric** — Proposed a new evaluation framework that integrates question difficulty, model confidence, and correctness, providing a more comprehensive performance measure than traditional metrics alone.
 - **Standard Benchmarks** — Evaluated models using accuracy, precision, recall, and F1-score for comparability.
-- **Research Output** — Findings are documented in the paper Evaluating Large Language Models for Legal Multiple Choice Question and Answering.
+- **Research Output** — Findings are documented in the paper Evaluating Large Language Models for Legal Multiple Choice Question and Answering *(https://drive.google.com/file/d/1SlIB_rnTibULa-J41kgCeESV4NL8bHfY/view?usp=sharing)*.
 
 ## Skills Developed
 - Applying transformer-based models to specialized, domain-specific NLP problems.
